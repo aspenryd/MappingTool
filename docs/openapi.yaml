@@ -1,0 +1,149 @@
+openapi: 3.0.0
+info:
+  title: Integration Mapper API
+  version: 1.0.0
+  description: API for managing data schemas and field mappings.
+
+paths:
+  /api/schemas/ingest:
+    post:
+      summary: Upload and ingest a schema file
+      operationId: IngestSchema
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                systemId:
+                  type: integer
+                name:
+                  type: string
+                schemaType:
+                  type: string
+                  enum: [JSON, XSD, OPENAPI]
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Schema created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectDto'
+
+  /api/projects/{id}/map:
+    get:
+      summary: Retrieve source and target fields for a mapping project
+      operationId: GetMappingContext
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Project mapping context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MappingContextDto'
+
+  /api/ai/suggest:
+    post:
+      summary: Get AI-powered mapping suggestions
+      operationId: GetAiSuggestions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuggestionRequestDto'
+      responses:
+        '200':
+          description: List of suggested mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FieldMappingSuggestionDto'
+
+components:
+  schemas:
+    DataObjectDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        fieldCount:
+          type: integer
+
+    FieldDefinitionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        path:
+          type: string
+        dataType:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDefinitionDto'
+
+    MappingContextDto:
+      type: object
+      properties:
+        projectId:
+          type: integer
+        sourceFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDefinitionDto'
+        targetFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDefinitionDto'
+        existingMappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldMappingDto'
+
+    FieldMappingDto:
+      type: object
+      properties:
+        sourceFieldId:
+          type: integer
+        targetFieldId:
+          type: integer
+        logic:
+          type: string
+
+    SuggestionRequestDto:
+      type: object
+      properties:
+        sourceFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDefinitionDto'
+        targetFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDefinitionDto'
+            
+    FieldMappingSuggestionDto:
+      type: object
+      properties:
+        sourceFieldId:
+          type: integer
+        targetFieldId:
+          type: integer
+        confidence:
+          type: number
+        reasoning:
+          type: string

@@ -1,0 +1,6 @@
+@IntegrationMapper.Api_HostAddress = http://localhost:5049
+
+GET {{IntegrationMapper.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
