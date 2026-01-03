@@ -1,0 +1,155 @@
+Date : 2026-01-03 12:28:20
+Directory : c:\utv\Henry\MappingTool
+Total : 85 files,  8433 codes, 179 comments, 887 blanks, all 9499 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          8 |      3,978 |          0 |          8 |      3,986 |
+| C#                 |         38 |      2,441 |        152 |        521 |      3,114 |
+| TypeScript JSX     |         16 |      1,196 |         21 |        170 |      1,387 |
+| Markdown           |          7 |        303 |          0 |         94 |        397 |
+| TypeScript         |          3 |        242 |          4 |         45 |        291 |
+| CSS                |          2 |         98 |          0 |         14 |        112 |
+| XML                |          6 |         72 |          0 |         20 |         92 |
+| MS SQL             |          1 |         48 |          2 |          7 |         57 |
+| JavaScript         |          1 |         22 |          0 |          2 |         24 |
+| HTML               |          1 |         13 |          0 |          1 |         14 |
+| YAML               |          1 |         13 |          0 |          4 |         17 |
+| JSON with Comments |          1 |          7 |          0 |          1 |          8 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                          | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                             |         85 |      8,433 |        179 |        887 |      9,499 |
+| . (Files)                                                                                                     |          1 |         84 |          0 |         33 |        117 |
+| .config                                                                                                       |          1 |         13 |          0 |          0 |         13 |
+| IntegrationMapper.Api                                                                                         |          9 |        732 |         35 |        131 |        898 |
+| IntegrationMapper.Api (Files)                                                                                 |          4 |        155 |         10 |         23 |        188 |
+| IntegrationMapper.Api\Controllers                                                                             |          4 |        554 |         25 |        108 |        687 |
+| IntegrationMapper.Api\Properties                                                                              |          1 |         23 |          0 |          0 |         23 |
+| IntegrationMapper.Core                                                                                        |         15 |        238 |         10 |         44 |        292 |
+| IntegrationMapper.Core (Files)                                                                                |          2 |         14 |          0 |          7 |         21 |
+| IntegrationMapper.Core\DTOs                                                                                   |          3 |        103 |          0 |         14 |        117 |
+| IntegrationMapper.Core\Entities                                                                               |          6 |         86 |          1 |         15 |        102 |
+| IntegrationMapper.Core\Interfaces                                                                             |          4 |         35 |          9 |          8 |         52 |
+| IntegrationMapper.Infrastructure                                                                              |         11 |      1,133 |         44 |        262 |      1,439 |
+| IntegrationMapper.Infrastructure (Files)                                                                      |          2 |         19 |          0 |          8 |         27 |
+| IntegrationMapper.Infrastructure\Data                                                                         |          1 |         97 |          6 |         19 |        122 |
+| IntegrationMapper.Infrastructure\Migrations                                                                   |          3 |        629 |          6 |        170 |        805 |
+| IntegrationMapper.Infrastructure\Services                                                                     |          5 |        388 |         32 |         65 |        485 |
+| IntegrationMapper.Tests                                                                                       |         10 |        458 |         63 |        104 |        625 |
+| IntegrationMapper.Tests (Files)                                                                               |          2 |         31 |          0 |          9 |         40 |
+| IntegrationMapper.Tests\Controllers                                                                           |          4 |        207 |         29 |         49 |        285 |
+| IntegrationMapper.Tests\Services                                                                              |          4 |        220 |         34 |         46 |        300 |
+| IntegrationMapper.Web                                                                                         |         31 |      5,555 |         25 |        255 |      5,835 |
+| IntegrationMapper.Web (Files)                                                                                 |          9 |      4,032 |          1 |         28 |      4,061 |
+| IntegrationMapper.Web\public                                                                                  |          1 |          1 |          0 |          0 |          1 |
+| IntegrationMapper.Web\src                                                                                     |         21 |      1,522 |         24 |        227 |      1,773 |
+| IntegrationMapper.Web\src (Files)                                                                             |          4 |        222 |          4 |         35 |        261 |
+| IntegrationMapper.Web\src\assets                                                                              |          1 |          1 |          0 |          0 |          1 |
+| IntegrationMapper.Web\src\auth                                                                                |          2 |        104 |          4 |         15 |        123 |
+| IntegrationMapper.Web\src\components                                                                          |         13 |        983 |         13 |        137 |      1,133 |
+| IntegrationMapper.Web\src\components\Layout                                                                   |          2 |        129 |          0 |         13 |        142 |
+| IntegrationMapper.Web\src\components\MappingCanvas                                                            |          1 |        238 |          4 |         32 |        274 |
+| IntegrationMapper.Web\src\components\Projects                                                                 |          4 |        306 |          1 |         45 |        352 |
+| IntegrationMapper.Web\src\components\Schemas                                                                  |          2 |        103 |          0 |         16 |        119 |
+| IntegrationMapper.Web\src\components\Systems                                                                  |          4 |        207 |          8 |         31 |        246 |
+| IntegrationMapper.Web\src\services                                                                            |          1 |        212 |          3 |         40 |        255 |
+| docs                                                                                                          |          7 |        220 |          2 |         58 |        280 |
++---------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                      | language           | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\utv\Henry\MappingTool\.config\dotnet-tools.json                                                            | JSON               |         13 |          0 |          0 |         13 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\Controllers\DevAuthController.cs                               | C#                 |         56 |          0 |          9 |         65 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\Controllers\MappingsController.cs                              | C#                 |        347 |          5 |         70 |        422 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\Controllers\SchemasController.cs                               | C#                 |         95 |         20 |         19 |        134 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\Controllers\SystemsController.cs                               | C#                 |         56 |          0 |         10 |         66 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\IntegrationMapper.Api.csproj                                   | XML                |         22 |          0 |          5 |         27 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\Program.cs                                                     | C#                 |        106 |         10 |         18 |        134 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\Properties\launchSettings.json                                 | JSON               |         23 |          0 |          0 |         23 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\appsettings.Development.json                                   | JSON               |         11 |          0 |          0 |         11 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Api\appsettings.json                                               | JSON               |         16 |          0 |          0 |         16 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Class1.cs                                                     | C#                 |          4 |          0 |          3 |          7 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\DTOs\MappingDtos.cs                                           | C#                 |         69 |          0 |          9 |         78 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\DTOs\SchemaDtos.cs                                            | C#                 |         16 |          0 |          3 |         19 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\DTOs\SystemDtos.cs                                            | C#                 |         18 |          0 |          2 |         20 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\DataObject.cs                                        | C#                 |         13 |          0 |          2 |         15 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\FieldDefinition.cs                                   | C#                 |         19 |          0 |          2 |         21 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\FieldMapping.cs                                      | C#                 |         15 |          0 |          2 |         17 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\IntegrationSystem.cs                                 | C#                 |         12 |          1 |          2 |         15 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\MappingProfile.cs                                    | C#                 |         16 |          0 |          5 |         21 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\MappingProject.cs                                    | C#                 |         11 |          0 |          2 |         13 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\IntegrationMapper.Core.csproj                                 | XML                |         10 |          0 |          4 |         14 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Interfaces\IAiMappingService.cs                               | C#                 |          8 |          0 |          2 |         10 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Interfaces\IFileStorageService.cs                             | C#                 |          9 |          0 |          1 |         10 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Interfaces\IMappingService.cs                                 | C#                 |          9 |          0 |          2 |         11 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Core\Interfaces\ISchemaParserService.cs                            | C#                 |          9 |          9 |          3 |         21 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Class1.cs                                           | C#                 |          4 |          0 |          3 |          7 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Data\IntegrationMapperContext.cs                    | C#                 |         97 |          6 |         19 |        122 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\IntegrationMapper.Infrastructure.csproj             | XML                |         15 |          0 |          5 |         20 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Migrations\20260102190339_InitialCreate.Designer.cs | C#                 |        224 |          2 |         75 |        301 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Migrations\20260102190339_InitialCreate.cs          | C#                 |        183 |          3 |         20 |        206 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Migrations\IntegrationMapperContextModelSnapshot.cs | C#                 |        222 |          1 |         75 |        298 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\AiMappingService.cs                        | C#                 |         62 |          7 |         14 |         83 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\JsonSchemaParserService.cs                 | C#                 |        121 |         19 |         22 |        162 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\LocalFileStorageService.cs                 | C#                 |         45 |          1 |          9 |         55 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\MappingService.cs                          | C#                 |         22 |          2 |          3 |         27 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\XsdSchemaParserService.cs                  | C#                 |        138 |          3 |         17 |        158 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Controllers\DevAuthControllerTests.cs                        | C#                 |         41 |          7 |         12 |         60 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Controllers\MappingsControllerTests.cs                       | C#                 |         62 |         10 |         15 |         87 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Controllers\SchemasControllerTests.cs                        | C#                 |         58 |          5 |         12 |         75 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Controllers\SystemsControllerTests.cs                        | C#                 |         46 |          7 |         10 |         63 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\IntegrationMapper.Tests.csproj                               | XML                |         23 |          0 |          6 |         29 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Services\AiMappingServiceTests.cs                            | C#                 |         78 |         13 |         15 |        106 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Services\JsonSchemaParserServiceTests.cs                     | C#                 |         61 |         10 |         13 |         84 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Services\LocalFileStorageServiceTests.cs                     | C#                 |         46 |          7 |         12 |         65 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Services\XsdSchemaParserServiceTests.cs                      | C#                 |         35 |          4 |          6 |         45 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Tests\UnitTest1.cs                                                 | C#                 |          8 |          0 |          3 |         11 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\README.md                                                      | Markdown           |         60 |          0 |         14 |         74 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\eslint.config.js                                               | JavaScript         |         22 |          0 |          2 |         24 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\index.html                                                     | HTML               |         13 |          0 |          1 |         14 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\package-lock.json                                              | JSON               |      3,829 |          0 |          1 |      3,830 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\package.json                                                   | JSON               |         36 |          0 |          1 |         37 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\public\vite.svg                                                | XML                |          1 |          0 |          0 |          1 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\App.css                                                    | CSS                |         37 |          0 |          6 |         43 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\App.tsx                                                    | TypeScript JSX     |        106 |          0 |         17 |        123 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\assets\react.svg                                           | XML                |          1 |          0 |          0 |          1 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\auth\AuthProvider.tsx                                      | TypeScript JSX     |         89 |          4 |         12 |        105 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\auth\authConfig.ts                                         | TypeScript         |         15 |          0 |          3 |         18 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Layout\CodeViewerModal.tsx                      | TypeScript JSX     |         50 |          0 |          7 |         57 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Layout\NavBar.tsx                               | TypeScript JSX     |         79 |          0 |          6 |         85 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\MappingCanvas\MappingCanvas.tsx                 | TypeScript JSX     |        238 |          4 |         32 |        274 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Projects\CreateProfileModal.tsx                 | TypeScript JSX     |        119 |          1 |         16 |        136 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Projects\CreateProjectModal.tsx                 | TypeScript JSX     |         64 |          0 |         10 |         74 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Projects\ProjectDetail.tsx                      | TypeScript JSX     |         83 |          0 |         12 |         95 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Projects\ProjectList.tsx                        | TypeScript JSX     |         40 |          0 |          7 |         47 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Schemas\DataObjectList.tsx                      | TypeScript JSX     |         51 |          0 |          8 |         59 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Schemas\SchemaUpload.tsx                        | TypeScript JSX     |         52 |          0 |          8 |         60 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Systems\AddSystemModal.tsx                      | TypeScript JSX     |         69 |          0 |          7 |         76 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Systems\SchemaViewerModal.tsx                   | TypeScript JSX     |         54 |          8 |          8 |         70 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Systems\SystemDetail.tsx                        | TypeScript JSX     |         24 |          0 |          7 |         31 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Systems\SystemList.tsx                          | TypeScript JSX     |         60 |          0 |          9 |         69 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\index.css                                                  | CSS                |         61 |          0 |          8 |         69 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\main.tsx                                                   | TypeScript JSX     |         18 |          4 |          4 |         26 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\services\api.ts                                            | TypeScript         |        212 |          3 |         40 |        255 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\tsconfig.app.json                                              | JSON               |         26 |          0 |          3 |         29 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\tsconfig.json                                                  | JSON with Comments |          7 |          0 |          1 |          8 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\tsconfig.node.json                                             | JSON               |         24 |          0 |          3 |         27 |
+| c:\utv\Henry\MappingTool\IntegrationMapper.Web\vite.config.ts                                                 | TypeScript         |         15 |          1 |          2 |         18 |
+| c:\utv\Henry\MappingTool\README.md                                                                            | Markdown           |         84 |          0 |         33 |        117 |
+| c:\utv\Henry\MappingTool\docs\backend_design.md                                                               | Markdown           |         64 |          0 |         17 |         81 |
+| c:\utv\Henry\MappingTool\docs\frontend_design.md                                                              | Markdown           |         36 |          0 |         11 |         47 |
+| c:\utv\Henry\MappingTool\docs\openapi.yaml                                                                    | YAML               |         13 |          0 |          4 |         17 |
+| c:\utv\Henry\MappingTool\docs\schema.sql                                                                      | MS SQL             |         48 |          2 |          7 |         57 |
+| c:\utv\Henry\MappingTool\docs\service_ai_mapping.md                                                           | Markdown           |         23 |          0 |         10 |         33 |
+| c:\utv\Henry\MappingTool\docs\service_schema_parsing.md                                                       | Markdown           |         24 |          0 |          5 |         29 |
+| c:\utv\Henry\MappingTool\docs\service_storage.md                                                              | Markdown           |         12 |          0 |          4 |         16 |
+| Total                                                                                                         |                    |      8,433 |        179 |        887 |      9,499 |
++---------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

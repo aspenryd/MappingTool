@@ -27,7 +27,7 @@ namespace IntegrationMapper.Tests.Services
             };
 
             // Act
-            var result = await _service.SuggestMappingsAsync(source, target);
+            var result = await _service.SuggestMappingsAsync(source, target, new List<int>());
 
             // Assert
             Assert.Single(result);
@@ -51,7 +51,7 @@ namespace IntegrationMapper.Tests.Services
             };
 
             // Act
-            var result = await _service.SuggestMappingsAsync(source, target);
+            var result = await _service.SuggestMappingsAsync(source, target, new List<int>());
 
             // Assert
             Assert.Single(result);
@@ -61,10 +61,7 @@ namespace IntegrationMapper.Tests.Services
         [Fact]
         public async Task SuggestMappings_ShouldEnforce_OneToOneMapping()
         {
-            // Arrange: One Source "ID" vs Two Targets "ID" and "OldID"
-            // Both might match "ID" strongly, but once "ID" is used, it shouldn't be used again?
-            // Wait, 1-to-1 means a source can't map to multiple targets AND a target can't be mapped from multiple sources.
-            
+            // Arrange
             var source = new List<FieldDefinitionDto>
             {
                 new FieldDefinitionDto { Id = 1, Name = "AccountCode", Path = "AccountCode" }
@@ -76,12 +73,33 @@ namespace IntegrationMapper.Tests.Services
             };
 
             // Act
-            var result = await _service.SuggestMappingsAsync(source, target);
+            var result = await _service.SuggestMappingsAsync(source, target, new List<int>());
 
             // Assert
             // Should match only the best one.
             Assert.Single(result); 
             Assert.Equal(101, result[0].TargetFieldId);
+        }
+
+        [Fact]
+        public async Task SuggestMappings_ShouldIgnore_ExistingMappings()
+        {
+            // Arrange
+            var source = new List<FieldDefinitionDto>
+            {
+                new FieldDefinitionDto { Id = 1, Name = "Name", Path = "Name" }
+            };
+            var target = new List<FieldDefinitionDto>
+            {
+                new FieldDefinitionDto { Id = 101, Name = "Name", Path = "Name" }
+            };
+            var existingTargetIds = new List<int> { 101 };
+
+            // Act
+            var result = await _service.SuggestMappingsAsync(source, target, existingTargetIds);
+
+            // Assert
+            Assert.Empty(result);
         }
     }
 }

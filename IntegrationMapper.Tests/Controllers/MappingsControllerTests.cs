@@ -27,16 +27,34 @@ namespace IntegrationMapper.Tests.Controllers
             var context = GetInMemoryContext();
             
             // Seed Data
-            var sourceObject = new DataObject { Id = 1, Name = "Source", SchemaType = "JSON", FileReference = "source.json" };
-            var targetObject = new DataObject { Id = 2, Name = "Target", SchemaType = "JSON", FileReference = "target.json" };
+            // Ensure SystemId is set if required, or better yet, create a system first if FK required.
+            // InMemory might not enforce FK but might enforce Required. Check Entity Config.
+            // Assuming SystemId is required.
+            
+            var system = new IntegrationSystem { Id = 1, Name = "Sys", Category = "Test", Description = "Desc", ExternalId = "EXT" };
+            context.IntegrationSystems.Add(system);
+            
+            var sourceObject = new DataObject { Id = 1, Name = "Source", SchemaType = "JSON", FileReference = "source.json", SystemId = 1, System = system };
+            var targetObject = new DataObject { Id = 2, Name = "Target", SchemaType = "JSON", FileReference = "target.json", SystemId = 1, System = system };
             context.DataObjects.AddRange(sourceObject, targetObject);
             
-            var sourceField = new FieldDefinition { Id = 10, Name = "SrcName", Path = "SrcName", DataObject = sourceObject, DataType = "String" };
-            var targetField = new FieldDefinition { Id = 20, Name = "TgtName", Path = "TgtName", DataObject = targetObject, DataType = "String" };
+            var sourceField = new FieldDefinition { Id = 10, Name = "SrcName", Path = "SrcName", DataObject = sourceObject, DataObjectId = 1, DataType = "String" };
+            var targetField = new FieldDefinition { Id = 20, Name = "TgtName", Path = "TgtName", DataObject = targetObject, DataObjectId = 2, DataType = "String" };
             context.FieldDefinitions.AddRange(sourceField, targetField);
 
-            var project = new MappingProject { Id = 100, Name = "Test Project", SourceObjectId = 1, TargetObjectId = 2 };
+            var project = new MappingProject { Id = 100, Name = "Test Project", Description = "Test Desc" };
+            var profile = new MappingProfile 
+            { 
+                Id = 200, 
+                Name = "Test Profile", 
+                MappingProjectId = 100, 
+                SourceObjectId = 1, 
+                TargetObjectId = 2,
+                Mappings = new List<FieldMapping>()
+            };
+
             context.MappingProjects.Add(project);
+            context.MappingProfiles.Add(profile);
 
             await context.SaveChangesAsync();
 
@@ -48,13 +66,14 @@ namespace IntegrationMapper.Tests.Controllers
             };
 
             // Setup Mock to return specific suggestions when called
-            mockAiService.Setup(s => s.SuggestMappingsAsync(It.IsAny<List<FieldDefinitionDto>>(), It.IsAny<List<FieldDefinitionDto>>()))
+            mockAiService.Setup(s => s.SuggestMappingsAsync(It.IsAny<List<FieldDefinitionDto>>(), It.IsAny<List<FieldDefinitionDto>>(), It.IsAny<List<int>>()))
                 .ReturnsAsync(expectedSuggestions);
 
             var controller = new MappingsController(context);
 
             // Act
-            var result = await controller.SuggestMappings(100, mockAiService.Object);
+            // Call SuggestMappings with profileId (200)
+            var result = await controller.SuggestMappings(200, mockAiService.Object);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);

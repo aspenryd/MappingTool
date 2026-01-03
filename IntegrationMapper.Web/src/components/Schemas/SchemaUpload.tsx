@@ -40,7 +40,7 @@ const SchemaUpload: React.FC<SchemaUploadProps> = ({ systemId, onUploadSuccess }
 
     return (
         <div style={{ padding: '10px', border: '1px solid #ccc', marginTop: '10px' }}>
-            <h4>Upload Schema (JSON)</h4>
+            <h4>Upload Schema (JSON/XSD)</h4>
             <input
                 type="text"
                 placeholder="Object Name (e.g. Customer)"
@@ -48,7 +48,7 @@ const SchemaUpload: React.FC<SchemaUploadProps> = ({ systemId, onUploadSuccess }
                 onChange={e => setName(e.target.value)}
                 style={{ marginRight: '10px', padding: '5px' }}
             />
-            <input type="file" accept=".json" onChange={handleFileChange} style={{ marginRight: '10px' }} />
+            <input type="file" accept=".json,.xsd" onChange={handleFileChange} style={{ marginRight: '10px' }} />
             <button onClick={handleUpload} disabled={uploading}>
                 {uploading ? 'Uploading...' : 'Upload'}
             </button>

@@ -1,28 +1,45 @@
 # Backend Design & Logic
 
-## 1. DTO Classes (`IntegrationMapper.Core.DTOs`)
+## 1. Domain Entities (`IntegrationMapper.Core.Entities`)
+
+**MappingProject**
+- Top-level container.
+- Relations: `ICollection<MappingProfile> Profiles`
+
+**MappingProfile**
+- Represents a single mapping definition between two DataObjects.
+- Properties: `SourceObjectId`, `TargetObjectId`, `Name`.
+- Relations: `ICollection<FieldMapping> Mappings`.
+
+**FieldMapping**
+- Represents a link between fields.
+- Properties: `ProfileId`, `SourceFieldId`, `TargetFieldId`, `TransformationLogic`.
+
+## 2. DTO Classes (`IntegrationMapper.Core.DTOs`)
 
 ```csharp
-public class FieldDefinitionDto
-{
-    public int Id { get; set; }
-    public string Path { get; set; }
-    public string Name { get; set; }
-    public string DataType { get; set; }
-    public List<FieldDefinitionDto> Children { get; set; } = new();
-}
-
 public class MappingProjectDto
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public string Description { get; set; }
+    public List<MappingProfileDto> Profiles { get; set; }
+}
+
+public class MappingProfileDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
     public int SourceObjectId { get; set; }
+    public string SourceObjectName { get; set; }
     public int TargetObjectId { get; set; }
+    public string TargetObjectName { get; set; }
 }
 
 public class MappingContextDto
 {
-    public int ProjectId { get; set; }
+    public int ProjectId { get; set; } // Parent Project
+    public int ProfileId { get; set; } // Current Profile
     public List<FieldDefinitionDto> SourceFields { get; set; }
     public List<FieldDefinitionDto> TargetFields { get; set; }
     public List<FieldMappingDto> ExistingMappings { get; set; }
@@ -36,53 +53,28 @@ public class FieldMappingDto
 }
 ```
 
-## 2. Controller Design (`IntegrationMapper.Api.Controllers.MappingsController`)
+## 3. Controller Design
 
-```csharp
-[ApiController]
-[Route("api/projects/{projectId}/map")]
-public class MappingsController : ControllerBase
-{
-    private readonly IMappingService _mappingService;
+### `MappingsController` (`api/projects`)
+- `GET /`: List projects.
+- `POST /`: Create project.
+- `GET /{id}`: Get project details (with profiles).
+- `POST /{id}/profiles`: Create a new profile.
 
-    public MappingsController(IMappingService mappingService)
-    {
-        _mappingService = mappingService;
-    }
+### `MappingsController` (`api/profiles`)
+- `GET /{profileId}/map`: Get Mapping Context (Source/Target fields + Existing mappings).
+- `POST /{profileId}/map`: Save/Update a mapping.
+- `DELETE /{profileId}/map/{targetFieldId}`: Delete a mapping.
+- `POST /{profileId}/suggest`: Get AI suggestions.
+- `GET /{profileId}/export/excel`: Download Excel spec.
+- `GET /{profileId}/export/csharp`: Download C# code.
+- `GET /{profileId}/code/csharp`: View C# code.
 
-    [HttpGet]
-    public async Task<ActionResult<MappingContextDto>> GetMappingContext(int projectId)
-    {
-        var context = await _mappingService.GetMappingContextAsync(projectId);
-        if (context == null) return NotFound();
-        return Ok(context);
-    }
+## 4. Services
 
-    [HttpPost]
-    public async Task<IActionResult> SaveMapping(int projectId, [FromBody] FieldMappingDto mapping)
-    {
-        await _mappingService.SaveMappingAsync(projectId, mapping);
-        return Ok();
-    }
-}
-```
+Detailed documentation for the infrastructure services can be found in separate files:
 
-## 3. Schema Parser Service Interface (`IntegrationMapper.Core.Interfaces`)
+*   **[AI Mapping Service](service_ai_mapping.md)**: Smart matching logic using `FuzzySharp`.
+*   **[Schema Parsing](service_schema_parsing.md)**: `JsonSchemaParserService` and `XsdSchemaParserService`.
+*   **[File Storage](service_storage.md)**: `LocalFileStorageService` implementation.
 
-```csharp
-public interface ISchemaParserService
-{
-    /// <summary>
-    /// Parses a schema file content and returns a flat or hierarchical list of field definitions.
-    /// </summary>
-    /// <param name="fileContent">Raw content of the schema file</param>
-    /// <param name="schemaType">Type of schema (JSON, XSD, OpenAPI)</param>
-    /// <returns>List of parsed field definitions</returns>
-    Task<List<FieldDefinition>> ParseSchemaAsync(Stream fileContent, string schemaType);
-
-    /// <summary>
-    /// Validates if the file content matches the expected schema type.
-    /// </summary>
-    bool ValidateSchema(Stream fileContent, string schemaType);
-}
-```

@@ -2,6 +2,7 @@ using IntegrationMapper.Core.DTOs;
 using IntegrationMapper.Core.Entities;
 using IntegrationMapper.Core.Interfaces;
 using IntegrationMapper.Infrastructure.Data;
+using IntegrationMapper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,16 +14,19 @@ namespace IntegrationMapper.Api.Controllers
     {
         private readonly IntegrationMapperContext _context;
         private readonly IFileStorageService _fileStorage;
-        private readonly ISchemaParserService _schemaParser;
+        private readonly ISchemaParserService _jsonSchemaParser;
+        private readonly XsdSchemaParserService _xsdSchemaParser;
 
         public SchemasController(
             IntegrationMapperContext context,
             IFileStorageService fileStorage,
-            ISchemaParserService schemaParser)
+            ISchemaParserService jsonSchemaParser,
+            XsdSchemaParserService xsdSchemaParser)
         {
             _context = context;
             _fileStorage = fileStorage;
-            _schemaParser = schemaParser;
+            _jsonSchemaParser = jsonSchemaParser;
+            _xsdSchemaParser = xsdSchemaParser;
         }
 
         [HttpPost("ingest")]
@@ -30,6 +34,10 @@ namespace IntegrationMapper.Api.Controllers
         {
             if (dto.File == null || dto.File.Length == 0)
                 return BadRequest("No file uploaded.");
+
+            // 0. Detect Format
+            var extension = Path.GetExtension(dto.File.FileName).ToLower();
+            string schemaType = extension == ".xsd" ? "XSD" : "JSON";
 
             // 1. Save file
             string fileReference;
@@ -48,7 +56,15 @@ namespace IntegrationMapper.Api.Controllers
                 // but here we can just read from the uploaded file again since IFormFile allows OpenReadStream multiple times usually 
                 // OR we can read from the saved file if we wanted to be safe.
                 // Let's rely on IFormFile.OpenReadStream() creating a new stream or the buffer being available.
-                fields = await _schemaParser.ParseSchemaAsync(stream, "JSON");
+                
+                if (schemaType == "XSD")
+                {
+                    fields = await _xsdSchemaParser.ParseSchemaAsync(stream, "XSD");
+                }
+                else
+                {
+                    fields = await _jsonSchemaParser.ParseSchemaAsync(stream, "JSON");
+                }
             }
 
             // 3. Create DataObject
@@ -56,7 +72,7 @@ namespace IntegrationMapper.Api.Controllers
             {
                 SystemId = dto.SystemId,
                 Name = dto.Name,
-                SchemaType = "JSON",
+                SchemaType = schemaType,
                 FileReference = fileReference
             };
 
@@ -98,6 +114,20 @@ namespace IntegrationMapper.Api.Controllers
                 .ToListAsync();
                 
             return Ok(objects);
+        }
+
+        [HttpGet("{id}/content")]
+        public async Task<IActionResult> GetSchemaContent(int id)
+        {
+            var dataObject = await _context.DataObjects.FindAsync(id);
+            if (dataObject == null || string.IsNullOrEmpty(dataObject.FileReference))
+                return NotFound();
+
+            var stream = await _fileStorage.GetFileAsync(dataObject.FileReference);
+            if (stream == null) return NotFound("File not found on storage");
+
+            string contentType = dataObject.SchemaType == "XSD" ? "application/xml" : "application/json";
+            return File(stream, contentType, Path.GetFileName(dataObject.FileReference));
         }
     }
 }

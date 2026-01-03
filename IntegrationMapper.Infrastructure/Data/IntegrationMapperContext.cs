@@ -13,6 +13,7 @@ namespace IntegrationMapper.Infrastructure.Data
         public DbSet<DataObject> DataObjects { get; set; }
         public DbSet<FieldDefinition> FieldDefinitions { get; set; }
         public DbSet<MappingProject> MappingProjects { get; set; }
+        public DbSet<MappingProfile> MappingProfiles { get; set; }
         public DbSet<FieldMapping> FieldMappings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -68,7 +69,20 @@ namespace IntegrationMapper.Infrastructure.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.Description).HasMaxLength(1000); // Added
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETUTCDATE()");
+            });
+
+            // MappingProfile
+            modelBuilder.Entity<MappingProfile>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
+
+                entity.HasOne(d => d.MappingProject)
+                      .WithMany(p => p.Profiles)
+                      .HasForeignKey(d => d.MappingProjectId)
+                      .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.SourceObject)
                       .WithMany()
@@ -87,9 +101,9 @@ namespace IntegrationMapper.Infrastructure.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.TransformationLogic).HasColumnType("nvarchar(max)");
 
-                entity.HasOne(d => d.Project)
+                entity.HasOne(d => d.Profile)
                       .WithMany(p => p.Mappings)
-                      .HasForeignKey(d => d.ProjectId)
+                      .HasForeignKey(d => d.ProfileId)
                       .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.SourceField)

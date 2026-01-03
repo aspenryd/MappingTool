@@ -1,54 +1,46 @@
-# Frontend Component Structure - Mapping Canvas
+# Frontend Component Structure
 
 ## Overview
-The "Mapping Canvas" is the core component of the Integration Mapper. It allows users to visualize source and target fields side-by-side and draw connections between them.
+The frontend is built with **React**, **Vite**, and **TypeScript**. It supports a multi-view layout managed by `App.tsx`: Systems, Projects, Project Detail, and Mapping Canvas.
 
-## Technology Choice
-- **Library**: `React Flow` (recommended) or `SVG` based custom implementation.
-- **Reasoning**: React Flow handles zooming, panning, and node connectivity out of the box.
+## Navigation Structure
 
-## Component Structure
+1.  **System List**: View and manage Integration Systems and Data Objects.
+2.  **System Detail**: View schemas and download content.
+3.  **Project List**: View and create Mapping Projects.
+4.  **Project Detail**: View mappings profiles within a project.
+5.  **Mapping Canvas**: The core interface for mapping fields of a specific profile.
 
-```
-src/
-  components/
-    MappingCanvas/
-      MappingCanvas.tsx       # Main Container, handles layout and React Flow instance
-      msg/
-        SourceNode.tsx        # Custom Node for Source Fields
-        TargetNode.tsx        # Custom Node for Target Fields
-        ConnectionLine.tsx    # Custom styling for mapping lines
-      hooks/
-        useMappingState.ts    # Manages the list of mappings and updates
-      utils/
-        layout.ts             # Auto-layout algorithm to align fields
-```
+## Key Components
 
-## Interaction Design
+### Layout
+*   `NavBar.tsx`: Top navigation bar with Logo, View Switcher (Systems/Projects), and User Info.
+*   `CodeViewerModal.tsx`: Modal to view and copy generated C# code.
 
-### Scrolling & Zooming
-- **Zooming**: Handled by React Flow's `<ReactFlow />` wrapper. Users can scroll-wheel to zoom in/out to see large schemas.
-- **Panning**: Click-drag on empty space to pan the view.
-- **Independent Column Scrolling**:
-  - Requires a custom approach if using React Flow, as React Flow acts as a single infinite canvas.
-  - **Alternative**: Two fixed sidebars (HTML `overflow-y: auto`) with an SVG overlay for lines.
-  - **Chosen Approach**: **SVG Overlay with Fixed Columns**.
-    - **Left Column**: Source Fields List (Scrollable).
-    - **Right Column**: Target Fields List (Scrollable).
-    - **Center Layer**: SVG `div` overlaying the space between columns to draw Bezier curves.
+### Mapping Canvas (`src/components/MappingCanvas`)
+*   `MappingCanvas.tsx`: Main container. Integrates `React Flow`.
+    *   **Props**: `profileId: number`.
+    *   **State**: `nodes` (Source/Target fields), `edges` (Mappings), `selectedEdges`.
+    *   **Features**:
+        *   **Auto-Map**: Calls AI service.
+        *   **Export**: Excel/C# download buttons.
+        *   **View Code**: Opens `CodeViewerModal`.
+        *   **Delete**: Edge deletion support.
+*   `FieldNode.tsx`: Custom React Flow node. Displays field name, type, and detailed Tooltip.
 
-### Connection Logic (SVG Overlay Approach)
-1. **Ref Tracking**: Each `FieldItem` component registers its DOM position (Y-coordinate) relative to the container.
-2. **Drawing**:
-    - The SVG layer computes curves from `(LeftCol_RightEdge, SourceField_Y)` to `(RightCol_LeftEdge, TargetField_Y)`.
-    - Updates on scroll event of either column.
+### Projects (`src/components/Projects`)
+*   `ProjectList.tsx`: Lists projects.
+*   `ProjectDetail.tsx`: Lists profiles + "Create Profile" button.
+*   `CreateProfileModal.tsx`: Form to select Source/Target objects for a new profile.
 
-### Drawing Connections
-- **Drag**: User clicks and drags from a Source Field "handle".
-- **Drop**: User releases on a Target Field.
-- **Validation**: Prevent duplicate mappings if 1:1 is required (optional).
+### Systems (`src/components/Systems`)
+*   `SchemaViewerModal.tsx`: Displays raw schema content (JSON/XSD).
 
 ## State Management
-- `mappings`: Array of `{ sourceId, targetId, transformation }`.
-- `selectedMapping`: The currently clicked line (for editing logic).
-```
+*   **Local State**: Most state is managed locally in components (or parent `App` for navigation).
+*   **React Flow Store**: Internal state for nodes/edges/tracking.
+
+## Interaction Design
+*   **Drag & Drop**: Connect Source Node (Right Handle) to Target Node (Left Handle).
+*   **Zoom/Pan**: Native React Flow controls.
+*   **Selection**: Click edge to select, "Delete Selected" button to remove.

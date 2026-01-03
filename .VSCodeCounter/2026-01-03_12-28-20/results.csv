@@ -1,0 +1,87 @@
+"filename", "language", "Markdown", "XML", "TypeScript JSX", "TypeScript", "JSON", "CSS", "C#", "JSON with Comments", "HTML", "JavaScript", "MS SQL", "YAML", "comment", "blank", "total"
+"c:\utv\Henry\MappingTool\.config\dotnet-tools.json", "JSON", 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\Controllers\DevAuthController.cs", "C#", 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 0, 0, 0, 9, 65
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\Controllers\MappingsController.cs", "C#", 0, 0, 0, 0, 0, 0, 347, 0, 0, 0, 0, 0, 5, 70, 422
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\Controllers\SchemasController.cs", "C#", 0, 0, 0, 0, 0, 0, 95, 0, 0, 0, 0, 0, 20, 19, 134
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\Controllers\SystemsController.cs", "C#", 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 0, 0, 0, 10, 66
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\IntegrationMapper.Api.csproj", "XML", 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 27
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\Program.cs", "C#", 0, 0, 0, 0, 0, 0, 106, 0, 0, 0, 0, 0, 10, 18, 134
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\Properties\launchSettings.json", "JSON", 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\appsettings.Development.json", "JSON", 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11
+"c:\utv\Henry\MappingTool\IntegrationMapper.Api\appsettings.json", "JSON", 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Class1.cs", "C#", 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 3, 7
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\DTOs\MappingDtos.cs", "C#", 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 0, 0, 0, 9, 78
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\DTOs\SchemaDtos.cs", "C#", 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 3, 19
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\DTOs\SystemDtos.cs", "C#", 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 2, 20
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\DataObject.cs", "C#", 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 2, 15
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\FieldDefinition.cs", "C#", 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 2, 21
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\FieldMapping.cs", "C#", 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 2, 17
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\IntegrationSystem.cs", "C#", 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 1, 2, 15
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\MappingProfile.cs", "C#", 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 5, 21
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Entities\MappingProject.cs", "C#", 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 2, 13
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\IntegrationMapper.Core.csproj", "XML", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Interfaces\IAiMappingService.cs", "C#", 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 2, 10
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Interfaces\IFileStorageService.cs", "C#", 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 1, 10
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Interfaces\IMappingService.cs", "C#", 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 2, 11
+"c:\utv\Henry\MappingTool\IntegrationMapper.Core\Interfaces\ISchemaParserService.cs", "C#", 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 9, 3, 21
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Class1.cs", "C#", 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 3, 7
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Data\IntegrationMapperContext.cs", "C#", 0, 0, 0, 0, 0, 0, 97, 0, 0, 0, 0, 0, 6, 19, 122
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\IntegrationMapper.Infrastructure.csproj", "XML", 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Migrations\20260102190339_InitialCreate.Designer.cs", "C#", 0, 0, 0, 0, 0, 0, 224, 0, 0, 0, 0, 0, 2, 75, 301
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Migrations\20260102190339_InitialCreate.cs", "C#", 0, 0, 0, 0, 0, 0, 183, 0, 0, 0, 0, 0, 3, 20, 206
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Migrations\IntegrationMapperContextModelSnapshot.cs", "C#", 0, 0, 0, 0, 0, 0, 222, 0, 0, 0, 0, 0, 1, 75, 298
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\AiMappingService.cs", "C#", 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 7, 14, 83
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\JsonSchemaParserService.cs", "C#", 0, 0, 0, 0, 0, 0, 121, 0, 0, 0, 0, 0, 19, 22, 162
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\LocalFileStorageService.cs", "C#", 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 1, 9, 55
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\MappingService.cs", "C#", 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 2, 3, 27
+"c:\utv\Henry\MappingTool\IntegrationMapper.Infrastructure\Services\XsdSchemaParserService.cs", "C#", 0, 0, 0, 0, 0, 0, 138, 0, 0, 0, 0, 0, 3, 17, 158
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Controllers\DevAuthControllerTests.cs", "C#", 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 7, 12, 60
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Controllers\MappingsControllerTests.cs", "C#", 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 10, 15, 87
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Controllers\SchemasControllerTests.cs", "C#", 0, 0, 0, 0, 0, 0, 58, 0, 0, 0, 0, 0, 5, 12, 75
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Controllers\SystemsControllerTests.cs", "C#", 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 0, 7, 10, 63
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\IntegrationMapper.Tests.csproj", "XML", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 29
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Services\AiMappingServiceTests.cs", "C#", 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 0, 0, 13, 15, 106
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Services\JsonSchemaParserServiceTests.cs", "C#", 0, 0, 0, 0, 0, 0, 61, 0, 0, 0, 0, 0, 10, 13, 84
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Services\LocalFileStorageServiceTests.cs", "C#", 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 0, 7, 12, 65
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\Services\XsdSchemaParserServiceTests.cs", "C#", 0, 0, 0, 0, 0, 0, 35, 0, 0, 0, 0, 0, 4, 6, 45
+"c:\utv\Henry\MappingTool\IntegrationMapper.Tests\UnitTest1.cs", "C#", 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 3, 11
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\README.md", "Markdown", 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 74
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\eslint.config.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 2, 24
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 1, 14
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\package-lock.json", "JSON", 0, 0, 0, 0, 3829, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3830
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\package.json", "JSON", 0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 1, 37
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\public\vite.svg", "XML", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\App.css", "CSS", 0, 0, 0, 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 6, 43
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\App.tsx", "TypeScript JSX", 0, 0, 106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 123
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\assets\react.svg", "XML", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\auth\AuthProvider.tsx", "TypeScript JSX", 0, 0, 89, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 12, 105
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\auth\authConfig.ts", "TypeScript", 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 18
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Layout\CodeViewerModal.tsx", "TypeScript JSX", 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 57
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Layout\NavBar.tsx", "TypeScript JSX", 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 85
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\MappingCanvas\MappingCanvas.tsx", "TypeScript JSX", 0, 0, 238, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 32, 274
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Projects\CreateProfileModal.tsx", "TypeScript JSX", 0, 0, 119, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 16, 136
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Projects\CreateProjectModal.tsx", "TypeScript JSX", 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 74
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Projects\ProjectDetail.tsx", "TypeScript JSX", 0, 0, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 95
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Projects\ProjectList.tsx", "TypeScript JSX", 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 47
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Schemas\DataObjectList.tsx", "TypeScript JSX", 0, 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 59
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Schemas\SchemaUpload.tsx", "TypeScript JSX", 0, 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 60
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Systems\AddSystemModal.tsx", "TypeScript JSX", 0, 0, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 76
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Systems\SchemaViewerModal.tsx", "TypeScript JSX", 0, 0, 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 70
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Systems\SystemDetail.tsx", "TypeScript JSX", 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 31
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\components\Systems\SystemList.tsx", "TypeScript JSX", 0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 69
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\index.css", "CSS", 0, 0, 0, 0, 0, 61, 0, 0, 0, 0, 0, 0, 0, 8, 69
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\main.tsx", "TypeScript JSX", 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 26
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\src\services\api.ts", "TypeScript", 0, 0, 0, 212, 0, 0, 0, 0, 0, 0, 0, 0, 3, 40, 255
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\tsconfig.app.json", "JSON", 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 3, 29
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 1, 8
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\tsconfig.node.json", "JSON", 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 3, 27
+"c:\utv\Henry\MappingTool\IntegrationMapper.Web\vite.config.ts", "TypeScript", 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 18
+"c:\utv\Henry\MappingTool\README.md", "Markdown", 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 117
+"c:\utv\Henry\MappingTool\docs\backend_design.md", "Markdown", 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 81
+"c:\utv\Henry\MappingTool\docs\frontend_design.md", "Markdown", 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 47
+"c:\utv\Henry\MappingTool\docs\openapi.yaml", "YAML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 4, 17
+"c:\utv\Henry\MappingTool\docs\schema.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 2, 7, 57
+"c:\utv\Henry\MappingTool\docs\service_ai_mapping.md", "Markdown", 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 33
+"c:\utv\Henry\MappingTool\docs\service_schema_parsing.md", "Markdown", 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 29
+"c:\utv\Henry\MappingTool\docs\service_storage.md", "Markdown", 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 16
+"Total", "-", 303, 72, 1196, 242, 3978, 98, 2441, 7, 13, 22, 48, 13, 179, 887, 9499

@@ -6,15 +6,18 @@ namespace IntegrationMapper.Infrastructure.Services
 {
     public class AiMappingService : IAiMappingService
     {
-        public Task<List<FieldMappingSuggestionDto>> SuggestMappingsAsync(List<FieldDefinitionDto> sourceFields, List<FieldDefinitionDto> targetFields)
+        public Task<List<FieldMappingSuggestionDto>> SuggestMappingsAsync(List<FieldDefinitionDto> sourceFields, List<FieldDefinitionDto> targetFields, List<int> existingTargetIds)
         {
             var suggestions = new List<FieldMappingSuggestionDto>();
             var flattenedSource = FlattenFields(sourceFields);
             var flattenedTarget = FlattenFields(targetFields);
 
+            // Filter out targets that are already mapped
+            var availableTargets = flattenedTarget.Where(t => !existingTargetIds.Contains(t.Id)).ToList();
+
             var candidates = new List<(FieldDefinitionDto Source, FieldDefinitionDto Target, double Score)>();
 
-            foreach (var target in flattenedTarget)
+            foreach (var target in availableTargets)
             {
                 foreach (var source in flattenedSource)
                 {
