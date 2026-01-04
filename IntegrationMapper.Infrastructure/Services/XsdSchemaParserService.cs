@@ -40,6 +40,13 @@ namespace IntegrationMapper.Infrastructure.Services
 
         private void ParseElement(XmlSchemaElement element, List<FieldDefinition> fields, FieldDefinition parent)
         {
+            // Collect generic schema attributes
+            var schemaAttrs = new Dictionary<string, object>
+            {
+                { "minOccurs", element.MinOccurs },
+                { "maxOccurs", element.MaxOccursString }
+            };
+
             var field = new FieldDefinition
             {
                 Name = element.Name ?? "Unnamed", 
@@ -47,6 +54,11 @@ namespace IntegrationMapper.Infrastructure.Services
                 DataType = element.SchemaTypeName.Name,
                 ParentField = parent,
                 IsNullable = element.MinOccurs == 0,
+                // User Request: Default to optional (False) if not specified. Standard XSD default is 1 (True).
+                // Check if MinOccursString is present. If null, assume 0 (False).
+                IsMandatory = !string.IsNullOrEmpty(element.MinOccursString) ? element.MinOccurs > 0 : false,
+                IsArray = element.MaxOccurs > 1 || element.MaxOccursString == "unbounded",
+                SchemaAttributes = System.Text.Json.JsonSerializer.Serialize(schemaAttrs),
                 ExampleValue = element.FixedValue ?? element.DefaultValue
             };
 
@@ -94,7 +106,8 @@ namespace IntegrationMapper.Infrastructure.Services
                         DataType = attribute.SchemaTypeName.Name ?? "Attribute", 
                         ParentField = field,
                         Description = "Attribute",
-                        ExampleValue = attribute.FixedValue ?? attribute.DefaultValue
+                        ExampleValue = attribute.FixedValue ?? attribute.DefaultValue,
+                        IsMandatory = attribute.Use == XmlSchemaUse.Required
                     };
                     fields.Add(attrField);
                 }

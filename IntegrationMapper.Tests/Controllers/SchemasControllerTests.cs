@@ -30,6 +30,8 @@ namespace IntegrationMapper.Tests.Controllers
             var mockStorage = new Mock<IFileStorageService>();
             var mockJsonParser = new Mock<ISchemaParserService>();
             var mockXsdParser = new XsdSchemaParserService(); // Can use real one or mock
+            var mockValidator = new Mock<ISchemaValidatorService>();
+            var mockExtractor = new Mock<IExampleExtractionService>();
 
             mockStorage.Setup(s => s.UploadFileAsync(It.IsAny<Stream>(), It.IsAny<string>()))
                 .ReturnsAsync("ref_123.json");
@@ -40,7 +42,7 @@ namespace IntegrationMapper.Tests.Controllers
                     new FieldDefinition { Name = "Field1", Path = "Field1", DataType = "String" } 
                 });
 
-            var controller = new SchemasController(context, mockStorage.Object, mockJsonParser.Object, mockXsdParser);
+            var controller = new SchemasController(context, mockStorage.Object, mockJsonParser.Object, mockXsdParser, mockValidator.Object, mockExtractor.Object);
 
             // Mock File
             var fileMock = new Mock<IFormFile>();

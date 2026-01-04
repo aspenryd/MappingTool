@@ -48,6 +48,8 @@ builder.Services.AddScoped<IMappingService, MappingService>();
 builder.Services.AddScoped<ISchemaParserService, JsonSchemaParserService>();
 builder.Services.AddScoped<IAiMappingService, AiMappingService>();
 builder.Services.AddScoped<XsdSchemaParserService>();
+builder.Services.AddScoped<ISchemaValidatorService, SchemaValidatorService>();
+builder.Services.AddScoped<IExampleExtractionService, ExampleExtractionService>();
 
 // Configure DbContext
 builder.Services.AddDbContext<IntegrationMapperContext>(options =>

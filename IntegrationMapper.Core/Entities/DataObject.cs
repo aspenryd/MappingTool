@@ -10,5 +10,6 @@ namespace IntegrationMapper.Core.Entities
 
         public IntegrationSystem System { get; set; }
         public ICollection<FieldDefinition> Fields { get; set; } = new List<FieldDefinition>();
+        public ICollection<DataObjectExample> Examples { get; set; } = new List<DataObjectExample>();
     }
 }

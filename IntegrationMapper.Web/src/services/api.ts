@@ -57,12 +57,19 @@ export interface CreateSystemDto {
     category: string;
 }
 
+export interface DataObjectExampleDto {
+    id: number;
+    fileName: string;
+    uploadedAt: string;
+}
+
 export interface DataObject {
     id: number;
     systemId: number;
     name: string;
     schemaType: string;
     fileReference?: string;
+    examples: DataObjectExampleDto[];
 }
 
 export interface FieldDefinitionDto {
@@ -73,11 +80,16 @@ export interface FieldDefinitionDto {
     length?: number;
     exampleValue?: string;
     description?: string;
+    isArray: boolean;
+    isMandatory: boolean;
+    schemaAttributes?: string; // JSON string
+    sampleValues: string[];
     children?: FieldDefinitionDto[];
 }
 
 export interface FieldMappingDto {
     sourceFieldId: number | null;
+    sourceFieldIds?: number[];
     targetFieldId: number;
     transformationLogic: string | null;
 }
@@ -103,12 +115,16 @@ export interface MappingProject {
     name: string;
     description: string;
     createdDate: string;
+    sourceSystemId: number;
+    targetSystemId: number;
     profiles: MappingProfileDto[];
 }
 
 export interface CreateProjectDto {
     name: string;
     description: string;
+    sourceSystemId: number;
+    targetSystemId: number;
 }
 
 export interface CreateMappingProfileDto {
@@ -122,6 +138,8 @@ export interface MappingContextDto {
     profileId: number;
     sourceFields: FieldDefinitionDto[];
     targetFields: FieldDefinitionDto[];
+    sourceExamples: DataObjectExampleDto[];
+    targetExamples: DataObjectExampleDto[];
     existingMappings: FieldMappingDto[];
 }
 
@@ -172,6 +190,30 @@ export const SchemaApi = {
     getSchemaContent: async (id: number): Promise<string> => {
         const response = await fetchWithAuth(`${API_BASE_url}/schemas/${id}/content`);
         if (!response.ok) throw new Error('Failed to fetch schema content');
+        return response.text();
+    },
+
+    uploadExample: async (dataObjectId: number, file: File): Promise<DataObjectExampleDto> => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await fetchWithAuth(`${API_BASE_url}/schemas/data-objects/${dataObjectId}/examples`, {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) throw new Error('Failed to upload example');
+        return response.json();
+    },
+
+    deleteExample: async (exampleId: number): Promise<void> => {
+        const response = await fetchWithAuth(`${API_BASE_url}/schemas/examples/${exampleId}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) throw new Error('Failed to delete example');
+    },
+
+    getExampleContent: async (exampleId: number): Promise<string> => {
+        const response = await fetchWithAuth(`${API_BASE_url}/schemas/examples/${exampleId}/content`);
+        if (!response.ok) throw new Error('Failed to fetch example content');
         return response.text();
     }
 };

@@ -12,5 +12,6 @@ namespace IntegrationMapper.Core.Entities
         public MappingProfile Profile { get; set; }
         public FieldDefinition SourceField { get; set; }
         public FieldDefinition TargetField { get; set; }
+        public ICollection<FieldMappingSource> Sources { get; set; } = new List<FieldMappingSource>();
     }
 }

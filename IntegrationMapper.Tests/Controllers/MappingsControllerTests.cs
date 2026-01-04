@@ -58,8 +58,11 @@ namespace IntegrationMapper.Tests.Controllers
 
             await context.SaveChangesAsync();
 
-            // Mock AI Service
+            // Mock Services
             var mockAiService = new Mock<IAiMappingService>();
+            var mockExtractor = new Mock<IExampleExtractionService>();
+            var mockStorage = new Mock<IFileStorageService>();
+
             var expectedSuggestions = new List<FieldMappingSuggestionDto>
             {
                 new FieldMappingSuggestionDto { SourceFieldId = 10, TargetFieldId = 20, Confidence = 0.95, Reasoning = "Test Match" }
@@ -69,7 +72,10 @@ namespace IntegrationMapper.Tests.Controllers
             mockAiService.Setup(s => s.SuggestMappingsAsync(It.IsAny<List<FieldDefinitionDto>>(), It.IsAny<List<FieldDefinitionDto>>(), It.IsAny<List<int>>()))
                 .ReturnsAsync(expectedSuggestions);
 
-            var controller = new MappingsController(context);
+            mockExtractor.Setup(e => e.ExtractExampleValuesAsync(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<List<FieldDefinition>>()))
+                .ReturnsAsync(new Dictionary<string, List<string>>());
+
+            var controller = new MappingsController(context, mockExtractor.Object, mockStorage.Object);
 
             // Act
             // Call SuggestMappings with profileId (200)

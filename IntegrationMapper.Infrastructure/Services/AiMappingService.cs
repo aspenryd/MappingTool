@@ -9,8 +9,8 @@ namespace IntegrationMapper.Infrastructure.Services
         public Task<List<FieldMappingSuggestionDto>> SuggestMappingsAsync(List<FieldDefinitionDto> sourceFields, List<FieldDefinitionDto> targetFields, List<int> existingTargetIds)
         {
             var suggestions = new List<FieldMappingSuggestionDto>();
-            var flattenedSource = FlattenFields(sourceFields);
-            var flattenedTarget = FlattenFields(targetFields);
+            var flattenedSource = FlattenFields(sourceFields).Where(f => !f.Children.Any()).ToList();
+            var flattenedTarget = FlattenFields(targetFields).Where(f => !f.Children.Any()).ToList();
 
             // Filter out targets that are already mapped
             var availableTargets = flattenedTarget.Where(t => !existingTargetIds.Contains(t.Id)).ToList();

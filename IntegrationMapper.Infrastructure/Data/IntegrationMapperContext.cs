@@ -15,6 +15,8 @@ namespace IntegrationMapper.Infrastructure.Data
         public DbSet<MappingProject> MappingProjects { get; set; }
         public DbSet<MappingProfile> MappingProfiles { get; set; }
         public DbSet<FieldMapping> FieldMappings { get; set; }
+        public DbSet<FieldMappingSource> FieldMappingSources { get; set; }
+        public DbSet<DataObjectExample> DataObjectExamples { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +43,11 @@ namespace IntegrationMapper.Infrastructure.Data
                 entity.HasOne(d => d.System)
                       .WithMany(p => p.DataObjects)
                       .HasForeignKey(d => d.SystemId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(d => d.Examples)
+                      .WithOne(e => e.DataObject)
+                      .HasForeignKey(e => e.DataObjectId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -115,6 +122,22 @@ namespace IntegrationMapper.Infrastructure.Data
                       .WithMany()
                       .HasForeignKey(d => d.TargetFieldId)
                       .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // FieldMappingSource
+            modelBuilder.Entity<FieldMappingSource>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                entity.HasOne(d => d.FieldMapping)
+                      .WithMany(p => p.Sources)
+                      .HasForeignKey(d => d.FieldMappingId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.SourceField)
+                      .WithMany()
+                      .HasForeignKey(d => d.SourceFieldId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

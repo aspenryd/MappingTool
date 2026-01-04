@@ -7,8 +7,12 @@ namespace IntegrationMapper.Core.DTOs
         public string Name { get; set; }
         public string DataType { get; set; }
         public int? Length { get; set; }
-        public string? ExampleValue { get; set; }
-        public string? Description { get; set; }
+        public bool IsArray { get; set; }
+        public bool IsMandatory { get; set; }
+        public string? SchemaAttributes { get; set; }
+        public string Description { get; set; }
+        public string ExampleValue { get; set; }
+        public List<string> SampleValues { get; set; } = new();
         public List<FieldDefinitionDto> Children { get; set; } = new();
     }
 
@@ -16,6 +20,8 @@ namespace IntegrationMapper.Core.DTOs
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public int SourceSystemId { get; set; }
+        public int TargetSystemId { get; set; }
     }
 
     public class CreateMappingProfileDto
@@ -40,6 +46,8 @@ namespace IntegrationMapper.Core.DTOs
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int SourceSystemId { get; set; }
+        public int TargetSystemId { get; set; }
         public string CreatedDate { get; set; }
         public List<MappingProfileDto> Profiles { get; set; } = new();
     }
@@ -50,6 +58,8 @@ namespace IntegrationMapper.Core.DTOs
         public int ProjectId { get; set; }
         public List<FieldDefinitionDto> SourceFields { get; set; } = new();
         public List<FieldDefinitionDto> TargetFields { get; set; } = new();
+        public List<DataObjectExampleDto> SourceExamples { get; set; } = new();
+        public List<DataObjectExampleDto> TargetExamples { get; set; } = new();
         public List<FieldMappingDto> ExistingMappings { get; set; } = new();
     }
 
@@ -58,6 +68,7 @@ namespace IntegrationMapper.Core.DTOs
         public int? SourceFieldId { get; set; }
         public int TargetFieldId { get; set; }
         public string? TransformationLogic { get; set; }
+        public List<int> SourceFieldIds { get; set; } = new();
     }
 
     public class SuggestionRequestDto

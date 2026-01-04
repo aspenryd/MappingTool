@@ -101,5 +101,38 @@ namespace IntegrationMapper.Tests.Services
             // Assert
             Assert.Empty(result);
         }
+
+        [Fact]
+        public async Task SuggestMappings_ShouldIgnore_NonLeafNodes()
+        {
+            // Arrange
+            var source = new List<FieldDefinitionDto>
+            {
+                new FieldDefinitionDto 
+                { 
+                    Id = 1, 
+                    Name = "Parent", 
+                    Path = "Parent",
+                    Children = new List<FieldDefinitionDto> // Has children -> should be ignored
+                    {
+                        new FieldDefinitionDto { Id = 2, Name = "Child", Path = "Parent/Child" }
+                    }
+                }
+            };
+            var target = new List<FieldDefinitionDto>
+            {
+                new FieldDefinitionDto { Id = 101, Name = "Parent", Path = "Parent" } // Name matches Parent, but Parent is not a leaf
+            };
+
+            // Act
+            var result = await _service.SuggestMappingsAsync(source, target, new List<int>());
+
+            // Assert
+            // Should NOT map Parent (Id 1) because it has children.
+            // Should it map Child (Id 2)? Child has no children.
+            // Target has "Parent". "Child" vs "Parent" -> low score.
+            // Expect Result Empty (or at least Id 1 is not mapped).
+            Assert.DoesNotContain(result, r => r.SourceFieldId == 1 && r.TargetFieldId == 101);
+        }
     }
 }

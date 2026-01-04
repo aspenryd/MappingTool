@@ -82,6 +82,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId, onBack, onSele
             <CreateProfileModal
                 isOpen={isAddProfileOpen}
                 projectId={projectId}
+                sourceSystemId={project?.sourceSystemId || 0}
+                targetSystemId={project?.targetSystemId || 0}
                 onClose={() => setIsAddProfileOpen(false)}
                 onProfileCreated={(id) => {
                     loadProject();

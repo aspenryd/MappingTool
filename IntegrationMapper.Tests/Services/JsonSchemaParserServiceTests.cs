@@ -79,5 +79,31 @@ namespace IntegrationMapper.Tests.Services
             Assert.Equal(address, street.ParentField);
             Assert.Equal("address.street", street.Path);
         }
+        [Fact]
+        public async Task ParseSchemaAsync_ShouldDetect_RequiredFields()
+        {
+            // Arrange
+            string json = @"{
+                ""type"": ""object"",
+                ""required"": [""name""],
+                ""properties"": {
+                    ""name"": { ""type"": ""string"" },
+                    ""age"": { ""type"": ""integer"" }
+                }
+            }";
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+
+            // Act
+            var fields = await _service.ParseSchemaAsync(stream, "JSON");
+
+            // Assert
+            var nameField = fields.FirstOrDefault(f => f.Name == "name");
+            Assert.NotNull(nameField);
+            Assert.True(nameField.IsMandatory, "Name should be mandatory");
+
+            var ageField = fields.FirstOrDefault(f => f.Name == "age");
+            Assert.NotNull(ageField);
+            Assert.False(ageField.IsMandatory, "Age should not be mandatory");
+        }
     }
 }

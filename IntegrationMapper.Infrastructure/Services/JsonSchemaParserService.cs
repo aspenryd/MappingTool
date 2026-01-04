@@ -41,6 +41,19 @@ namespace IntegrationMapper.Infrastructure.Services
                     // 1. JSON Schema "properties" (standard schema)
                     if (element.TryGetProperty("properties", out var propertiesElement) && propertiesElement.ValueKind == JsonValueKind.Object)
                     {
+                        // Extract required fields for this object
+                        var requiredFields = new HashSet<string>();
+                        if (element.TryGetProperty("required", out var requiredElement) && requiredElement.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var item in requiredElement.EnumerateArray())
+                            {
+                                if (item.ValueKind == JsonValueKind.String)
+                                {
+                                    requiredFields.Add(item.GetString());
+                                }
+                            }
+                        }
+
                         foreach (var property in propertiesElement.EnumerateObject())
                         {
                             var newPath = currentPath == "$" ? property.Name : $"{currentPath}.{property.Name}";
@@ -57,12 +70,29 @@ namespace IntegrationMapper.Infrastructure.Services
                                 dataType = "Object"; 
                             }
 
+                            bool isArray = dataType.Equals("array", StringComparison.OrdinalIgnoreCase);
+                            
+                            // Collect generic schema attributes
+                            var schemaAttrs = new Dictionary<string, object>();
+                            foreach (var prop in property.Value.EnumerateObject())
+                            {
+                                if (prop.Name != "properties" && prop.Name != "items" && prop.Name != "type" && 
+                                    prop.Name != "description" && prop.Name != "example" && prop.Name != "default")
+                                {
+                                    // Store raw JSON element string or value for simplicity
+                                    schemaAttrs[prop.Name] = prop.Value;
+                                }
+                            }
+
                             var field = new FieldDefinition
                             {
                                 Name = property.Name,
                                 Path = newPath,
                                 DataType = dataType,
-                                ParentField = parent
+                                ParentField = parent,
+                                IsArray = isArray,
+                                IsMandatory = requiredFields.Contains(property.Name),
+                                SchemaAttributes = schemaAttrs.Any() ? JsonSerializer.Serialize(schemaAttrs) : null
                             };
 
                             // Check for "example", "default", "description"

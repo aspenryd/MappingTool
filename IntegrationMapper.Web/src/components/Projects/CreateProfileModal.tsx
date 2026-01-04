@@ -4,36 +4,33 @@ import { ProjectApi, SchemaApi, type CreateMappingProfileDto, type DataObject, t
 interface CreateProfileModalProps {
     isOpen: boolean;
     projectId: number;
+    sourceSystemId: number;
+    targetSystemId: number;
     onClose: () => void;
     onProfileCreated: (profileId: number) => void;
 }
 
-const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, projectId, onClose, onProfileCreated }) => {
+const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, projectId, sourceSystemId, targetSystemId, onClose, onProfileCreated }) => {
     const [name, setName] = useState('');
     const [sourceObjectId, setSourceObjectId] = useState<number | null>(null);
     const [targetObjectId, setTargetObjectId] = useState<number | null>(null);
 
-    // Grouping by System
-    const [systems, setSystems] = useState<IntegrationSystem[]>([]);
-    const [systemObjects, setSystemObjects] = useState<{ [key: number]: DataObject[] }>({});
+    const [sourceObjects, setSourceObjects] = useState<DataObject[]>([]);
+    const [targetObjects, setTargetObjects] = useState<DataObject[]>([]);
 
     useEffect(() => {
-        if (isOpen) {
+        if (isOpen && sourceSystemId && targetSystemId) {
             loadMetaData();
         }
-    }, [isOpen]);
+    }, [isOpen, sourceSystemId, targetSystemId]);
 
     const loadMetaData = async () => {
         try {
-            const sys = await SystemApi.getSystems();
-            setSystems(sys);
+            const sObjs = await SchemaApi.getDataObjects(sourceSystemId);
+            setSourceObjects(sObjs);
 
-            const objectsMap: { [key: number]: DataObject[] } = {};
-            for (const s of sys) {
-                const objs = await SchemaApi.getDataObjects(s.id);
-                objectsMap[s.id] = objs;
-            }
-            setSystemObjects(objectsMap);
+            const tObjs = await SchemaApi.getDataObjects(targetSystemId);
+            setTargetObjects(tObjs);
         } catch (err) {
             console.error(err);
         }
@@ -93,12 +90,8 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, project
                             style={{ width: '100%', padding: '5px' }}
                         >
                             <option value="">Select Source Object...</option>
-                            {systems.map(sys => (
-                                <optgroup key={sys.id} label={sys.name}>
-                                    {systemObjects[sys.id]?.map(obj => (
-                                        <option key={obj.id} value={obj.id}>{obj.name}</option>
-                                    ))}
-                                </optgroup>
+                            {sourceObjects.map(obj => (
+                                <option key={obj.id} value={obj.id}>{obj.name}</option>
                             ))}
                         </select>
                     </div>
@@ -112,12 +105,8 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, project
                             style={{ width: '100%', padding: '5px' }}
                         >
                             <option value="">Select Target Object...</option>
-                            {systems.map(sys => (
-                                <optgroup key={sys.id} label={sys.name}>
-                                    {systemObjects[sys.id]?.map(obj => (
-                                        <option key={obj.id} value={obj.id}>{obj.name}</option>
-                                    ))}
-                                </optgroup>
+                            {targetObjects.map(obj => (
+                                <option key={obj.id} value={obj.id}>{obj.name}</option>
                             ))}
                         </select>
                     </div>
