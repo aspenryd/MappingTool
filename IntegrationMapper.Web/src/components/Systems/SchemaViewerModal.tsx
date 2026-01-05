@@ -4,7 +4,7 @@ import { SchemaApi } from '../../services/api';
 interface SchemaViewerModalProps {
     isOpen: boolean;
     onClose: () => void;
-    schemaId: number;
+    schemaId: string;
     schemaName: string;
 }
 

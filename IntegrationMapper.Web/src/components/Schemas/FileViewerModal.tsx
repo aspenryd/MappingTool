@@ -4,7 +4,7 @@ import { SchemaApi } from '../../services/api';
 interface FileViewerModalProps {
     isOpen: boolean;
     onClose: () => void;
-    exampleId: number;
+    exampleId: string;
     filename: string;
 }
 

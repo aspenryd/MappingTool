@@ -3,7 +3,8 @@ namespace IntegrationMapper.Core.Entities
     public class DataObject
     {
         public int Id { get; set; }
-        public int SystemId { get; set; }
+        public Guid PublicId { get; set; } = Guid.NewGuid();
+        public int IntegrationSystemId { get; set; }
         public string Name { get; set; }
         public string SchemaType { get; set; } // JSON, XSD, OPENAPI
         public string FileReference { get; set; }

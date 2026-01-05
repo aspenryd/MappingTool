@@ -38,7 +38,7 @@ namespace IntegrationMapper.Tests.Services
             Assert.Contains(fileName, reference);
 
             // Verify physical existence
-            string savedPath = Directory.GetFiles(Path.Combine(_testPath, "SchemaStorage"), "*" + fileName).FirstOrDefault();
+            string? savedPath = Directory.GetFiles(Path.Combine(_testPath, "SchemaStorage"), "*" + fileName).FirstOrDefault();
             Assert.NotNull(savedPath);
             Assert.True(File.Exists(savedPath));
         }

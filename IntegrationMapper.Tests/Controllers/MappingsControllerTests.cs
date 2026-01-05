@@ -34,8 +34,8 @@ namespace IntegrationMapper.Tests.Controllers
             var system = new IntegrationSystem { Id = 1, Name = "Sys", Category = "Test", Description = "Desc", ExternalId = "EXT" };
             context.IntegrationSystems.Add(system);
             
-            var sourceObject = new DataObject { Id = 1, Name = "Source", SchemaType = "JSON", FileReference = "source.json", SystemId = 1, System = system };
-            var targetObject = new DataObject { Id = 2, Name = "Target", SchemaType = "JSON", FileReference = "target.json", SystemId = 1, System = system };
+            var sourceObject = new DataObject { Id = 1, Name = "Source", SchemaType = "JSON", FileReference = "source.json", IntegrationSystemId = 1, System = system };
+            var targetObject = new DataObject { Id = 2, Name = "Target", SchemaType = "JSON", FileReference = "target.json", IntegrationSystemId = 1, System = system };
             context.DataObjects.AddRange(sourceObject, targetObject);
             
             var sourceField = new FieldDefinition { Id = 10, Name = "SrcName", Path = "SrcName", DataObject = sourceObject, DataObjectId = 1, DataType = "String" };
@@ -78,8 +78,8 @@ namespace IntegrationMapper.Tests.Controllers
             var controller = new MappingsController(context, mockExtractor.Object, mockStorage.Object);
 
             // Act
-            // Call SuggestMappings with profileId (200)
-            var result = await controller.SuggestMappings(200, mockAiService.Object);
+            // Call SuggestMappings with profile.PublicId
+            var result = await controller.SuggestMappings(profile.PublicId, mockAiService.Object);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);

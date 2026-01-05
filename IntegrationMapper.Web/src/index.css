@@ -18,15 +18,22 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
 
 body {
   margin: 0;
+  /* Use flexbox to center content */
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  flex-direction: column;
+  /* Stack content vertically */
+  align-items: center;
+  /* Center horizontally */
+
+  /* THE FIX: Use 100% of the width explicitly */
+  width: 100%;
   min-height: 100vh;
 }
 
@@ -46,9 +53,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -59,10 +68,26 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
+}
+
+.flow-container {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 1400px;
+  /* Restrict width on large screens */
+  margin: 0 auto;
+  /* Center the container */
+  position: relative;
+}
+
+#root {
+  width: 100%;
 }

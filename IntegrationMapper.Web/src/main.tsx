@@ -14,11 +14,16 @@ const msalInstance = new PublicClientApplication(msalConfig);
 // msalInstance.initialize().then(() => { ... }); -> React 18+ strict mode might cause double init if not careful.
 // Standard pattern for msal-browser v3:
 
+import { BrowserRouter } from 'react-router-dom'
+// ... imports
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <MsalProvider instance={msalInstance}>
       <AuthProvider>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </AuthProvider>
     </MsalProvider>
   </StrictMode>,

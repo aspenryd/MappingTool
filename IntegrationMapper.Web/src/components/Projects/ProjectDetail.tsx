@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { ProjectApi, type MappingProject } from '../../services/api';
 import CreateProfileModal from './CreateProfileModal';
+import { useNavigate } from 'react-router-dom';
 
 interface ProjectDetailProps {
-    projectId: number;
+    publicId: string;
     onBack: () => void;
-    onSelectProfile: (profileId: number) => void;
 }
 
-const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId, onBack, onSelectProfile }) => {
+import { commonStyles } from '../../styles/common';
+
+const ProjectDetail: React.FC<ProjectDetailProps> = ({ publicId, onBack }) => {
     const [project, setProject] = useState<MappingProject | null>(null);
     const [loading, setLoading] = useState(true);
     const [isAddProfileOpen, setIsAddProfileOpen] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadProject();
-    }, [projectId]);
+    }, [publicId]);
 
     const loadProject = async () => {
         try {
             setLoading(true);
-            const data = await ProjectApi.getProject(projectId);
+            const data = await ProjectApi.getByPublicId(publicId);
             setProject(data);
         } catch (err) {
             console.error(err);
@@ -33,59 +36,72 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId, onBack, onSele
     if (!project) return <div>Project not found</div>;
 
     return (
-        <div style={{ padding: '20px' }}>
-            <button onClick={onBack} style={{ marginBottom: '10px' }}>&larr; Back to Projects</button>
-
-            <div style={{ borderBottom: '1px solid #eee', paddingBottom: '20px', marginBottom: '20px' }}>
-                <h2>{project.name}</h2>
-                <p>{project.description || 'No description'}</p>
-                <small>Created: {new Date(project.createdDate).toLocaleString()}</small>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {/* Standard Header */}
+            <div style={commonStyles.header}>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                    <button onClick={onBack} style={commonStyles.backButton} title="Back to Projects">
+                        ←
+                    </button>
+                    <div>
+                        <h2 style={commonStyles.headerTitle}>{project.name}</h2>
+                        <div style={{ fontSize: '12px', color: '#777' }}>
+                            Created: {new Date(project.createdDate).toLocaleDateString()}
+                        </div>
+                    </div>
+                </div>
+                <button onClick={() => setIsAddProfileOpen(true)} style={commonStyles.primaryButton}>
+                    + Add Profile
+                </button>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <div style={{ ...commonStyles.container, flex: 1, overflowY: 'auto' }}>
+                <div style={{ marginBottom: '20px', color: '#555' }}>
+                    {project.description || 'No description provided.'}
+                </div>
+
                 <h3>Mapping Profiles</h3>
-                <button onClick={() => setIsAddProfileOpen(true)}>+ Add Mapping Profile</button>
-            </div>
 
-            {project.profiles && project.profiles.length > 0 ? (
-                <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {project.profiles.map(profile => (
-                        <li key={profile.id} style={{
-                            border: '1px solid #ddd',
-                            padding: '15px',
-                            marginBottom: '10px',
-                            borderRadius: '4px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            backgroundColor: '#f9f9f9'
-                        }}>
-                            <div>
-                                <strong style={{ fontSize: '1.1em' }}>{profile.name}</strong>
-                                <div style={{ color: '#666', marginTop: '5px' }}>
-                                    {profile.sourceObjectName} &rarr; {profile.targetObjectName}
+                {project.profiles && project.profiles.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        {project.profiles.map(profile => (
+                            <div key={profile.id} style={commonStyles.listItem}>
+                                <div>
+                                    <strong style={{ fontSize: '1.1em', display: 'block', marginBottom: '5px' }}>{profile.name}</strong>
+                                    <div style={{ color: '#666', fontSize: '14px' }}>
+                                        <span style={{ marginRight: '15px' }}>📍 Source: <strong>{profile.sourceObjectName}</strong></span>
+                                        <span>🎯 Target: <strong>{profile.targetObjectName}</strong></span>
+                                    </div>
                                 </div>
+                                <button
+                                    onClick={() => navigate(`/mapping/${profile.id}`)} // Use ID which is now Guid
+                                    style={{
+                                        ...commonStyles.primaryButton,
+                                        backgroundColor: 'white',
+                                        color: '#007bff',
+                                        border: '1px solid #007bff'
+                                    }}
+                                >
+                                    Open Canvas
+                                </button>
                             </div>
-                            <button
-                                onClick={() => onSelectProfile(profile.id)}
-                                style={{ padding: '8px 16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                            >
-                                Open Canvas
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p style={{ fontStyle: 'italic', color: '#888' }}>No mapping profiles created yet. Add one to start mapping.</p>
-            )}
+                        ))}
+                    </div>
+                ) : (
+                    <div style={{ textAlign: 'center', padding: '40px', background: '#f9f9f9', borderRadius: '8px', color: '#888' }}>
+                        No mapping profiles created yet. <br />
+                        Click "Add Profile" to define a source-to-target mapping.
+                    </div>
+                )}
+            </div>
 
             <CreateProfileModal
                 isOpen={isAddProfileOpen}
-                projectId={projectId}
-                sourceSystemId={project?.sourceSystemId || 0}
-                targetSystemId={project?.targetSystemId || 0}
+                projectId={project.id}
+                sourceSystemId={project?.sourceSystemId || ''}
+                targetSystemId={project?.targetSystemId || ''}
                 onClose={() => setIsAddProfileOpen(false)}
-                onProfileCreated={(id) => {
+                onProfileCreated={() => {
                     loadProject();
                 }}
             />

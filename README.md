@@ -1,6 +1,6 @@
 # Integration Mapper
 
-A visual tool for mapping data structures between different integration systems.
+A visual tool for mapping data structures between different systems.
 
 ![Integration Mapper Logo](IntegrationMapper.Web/src/assets/logo.png)
 

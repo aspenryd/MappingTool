@@ -53,7 +53,12 @@ namespace IntegrationMapper.Tests.Controllers
             fileMock.Setup(_ => _.FileName).Returns(fileName);
             fileMock.Setup(_ => _.Length).Returns(stream.Length);
 
-            var dto = new IngestSchemaDto { SystemId = 1, Name = "MyObject", File = fileMock.Object };
+            // Ensure system exists with PublicId
+            var sysGuid = Guid.NewGuid();
+            context.IntegrationSystems.Add(new IntegrationSystem { Id = 1, PublicId = sysGuid, Name = "TestSys", Category="Cat", Description="Desc", ExternalId="Ext" });
+            await context.SaveChangesAsync();
+
+            var dto = new IngestSchemaDto { SystemPublicId = sysGuid, Name = "MyObject", File = fileMock.Object };
 
             // Act
             var result = await controller.IngestSchema(dto);

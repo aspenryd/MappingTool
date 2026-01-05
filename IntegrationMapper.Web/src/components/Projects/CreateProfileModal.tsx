@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { ProjectApi, SchemaApi, type CreateMappingProfileDto, type DataObject, type IntegrationSystem, SystemApi } from '../../services/api';
+import { ProjectApi, SchemaApi, type CreateMappingProfileDto, type DataObject } from '../../services/api';
 
 interface CreateProfileModalProps {
     isOpen: boolean;
-    projectId: number;
-    sourceSystemId: number;
-    targetSystemId: number;
+    projectId: string;
+    sourceSystemId: string;
+    targetSystemId: string;
     onClose: () => void;
-    onProfileCreated: (profileId: number) => void;
+    onProfileCreated: (profileId: string) => void;
 }
 
 const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, projectId, sourceSystemId, targetSystemId, onClose, onProfileCreated }) => {
     const [name, setName] = useState('');
-    const [sourceObjectId, setSourceObjectId] = useState<number | null>(null);
-    const [targetObjectId, setTargetObjectId] = useState<number | null>(null);
+    const [sourceObjectId, setSourceObjectId] = useState<string>('');
+    const [targetObjectId, setTargetObjectId] = useState<string>('');
 
     const [sourceObjects, setSourceObjects] = useState<DataObject[]>([]);
     const [targetObjects, setTargetObjects] = useState<DataObject[]>([]);
@@ -42,8 +42,8 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, project
 
         const dto: CreateMappingProfileDto = {
             name,
-            sourceObjectId,
-            targetObjectId
+            sourceObjectPublicId: sourceObjectId,
+            targetObjectPublicId: targetObjectId
         };
 
         try {
@@ -51,8 +51,8 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, project
             onProfileCreated(result.id);
             onClose();
             setName('');
-            setSourceObjectId(null);
-            setTargetObjectId(null);
+            setSourceObjectId('');
+            setTargetObjectId('');
         } catch (err) {
             console.error(err);
             alert('Failed to create profile');
@@ -85,7 +85,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, project
                         <label>Source Object:</label>
                         <select
                             value={sourceObjectId || ''}
-                            onChange={e => setSourceObjectId(Number(e.target.value))}
+                            onChange={e => setSourceObjectId(e.target.value)}
                             required
                             style={{ width: '100%', padding: '5px' }}
                         >
@@ -100,7 +100,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ isOpen, project
                         <label>Target Object:</label>
                         <select
                             value={targetObjectId || ''}
-                            onChange={e => setTargetObjectId(Number(e.target.value))}
+                            onChange={e => setTargetObjectId(e.target.value)}
                             required
                             style={{ width: '100%', padding: '5px' }}
                         >

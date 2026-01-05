@@ -12,7 +12,7 @@ interface ExampleViewerModalProps {
 const ExampleViewerModal: React.FC<ExampleViewerModalProps> = ({ isOpen, onClose, sourceExamples, targetExamples }) => {
     if (!isOpen) return null;
 
-    const handleDownload = async (id: number, filename: string) => {
+    const handleDownload = async (id: string, filename: string) => {
         try {
             const text = await SchemaApi.getExampleContent(id);
             // Create blob and download

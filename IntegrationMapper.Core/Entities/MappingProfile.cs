@@ -5,6 +5,7 @@ namespace IntegrationMapper.Core.Entities
     public class MappingProfile
     {
         public int Id { get; set; }
+        public Guid PublicId { get; set; } = Guid.NewGuid();
         public int MappingProjectId { get; set; }
         public string Name { get; set; } // e.g. "Order Header -> Order Header"
 

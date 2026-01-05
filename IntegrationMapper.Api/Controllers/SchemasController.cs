@@ -41,6 +41,9 @@ namespace IntegrationMapper.Api.Controllers
             if (dto.File == null || dto.File.Length == 0)
                 return BadRequest("No file uploaded.");
 
+            var system = await _context.IntegrationSystems.FirstOrDefaultAsync(s => s.PublicId == dto.SystemPublicId);
+            if (system == null) return NotFound("System not found");
+
             // 0. Detect Format
             var extension = Path.GetExtension(dto.File.FileName).ToLower();
             string schemaType = extension == ".xsd" ? "XSD" : "JSON";
@@ -52,7 +55,6 @@ namespace IntegrationMapper.Api.Controllers
                 fileReference = await _fileStorage.UploadFileAsync(stream, dto.File.FileName);
             }
 
-            // 2. Parse Schema
             // 2. Parse Schema
             List<FieldDefinition> fields;
             try 
@@ -77,7 +79,7 @@ namespace IntegrationMapper.Api.Controllers
             // 3. Create DataObject
             var dataObject = new DataObject
             {
-                SystemId = dto.SystemId,
+                IntegrationSystemId = system.Id,
                 Name = dto.Name,
                 SchemaType = schemaType,
                 FileReference = fileReference
@@ -87,19 +89,9 @@ namespace IntegrationMapper.Api.Controllers
             await _context.SaveChangesAsync();
 
             // 4. Save Fields
-            // We need to set the DataObjectId and handle keys. 
-            // Since we reused Code-First but maybe didn't set up complex graph saving perfectly for bulk insert with relationships?
-            // Actually, if we add them to the context, EF Core should handle FKs if we set navigation properties or IDs.
-            // But `fields` is a flat list potentially? No, the parser returns a flat list? 
-            // Let's check parser. It adds ALL fields to the list, including children.
-            // BUT, ParentField reference inside `FieldDefinition` objects in the list points to other objects in the *same* list.
-            // EF Core is smart enough to handle this graph if we add them. 
-            // However, we need to set DataObjectId for all of them.
-
             foreach (var field in fields)
             {
                 field.DataObjectId = dataObject.Id;
-                // ParentFieldId is implied by ParentField navigation property
             }
 
             _context.FieldDefinitions.AddRange(fields);
@@ -107,40 +99,43 @@ namespace IntegrationMapper.Api.Controllers
 
             return Ok(new SchemaUploadResponseDto
             {
-                DataObjectId = dataObject.Id,
+                DataObjectPublicId = dataObject.PublicId,
                 Name = dataObject.Name,
                 FieldCount = fields.Count
             });
         }
         
-        [HttpGet("system/{systemId}")]
-        public async Task<ActionResult<List<DataObjectDto>>> GetDataObjects(int systemId)
+        [HttpGet("system/{systemPublicId:guid}")]
+        public async Task<ActionResult<List<DataObjectDto>>> GetDataObjects(Guid systemPublicId)
         {
+             var system = await _context.IntegrationSystems.FirstOrDefaultAsync(s => s.PublicId == systemPublicId);
+             if (system == null) return NotFound("System not found");
+
              var objects = await _context.DataObjects
-                .Where(d => d.SystemId == systemId)
+                .Where(d => d.IntegrationSystemId == system.Id)
                 .Include(d => d.Examples)
                 .ToListAsync();
                 
             return Ok(objects.Select(d => new DataObjectDto
             {
-                Id = d.Id,
-                SystemId = d.SystemId,
+                Id = d.PublicId,
+                SystemPublicId = system.PublicId,
                 Name = d.Name,
                 SchemaType = d.SchemaType,
                 FileReference = d.FileReference,
                 Examples = d.Examples.Select(e => new DataObjectExampleDto
                 {
-                    Id = e.Id,
+                    Id = e.PublicId,
                     FileName = e.FileName,
                     UploadedAt = e.UploadedAt
                 }).ToList()
             }).ToList());
         }
 
-        [HttpGet("{id}/content")]
-        public async Task<IActionResult> GetSchemaContent(int id)
+        [HttpGet("{id:guid}/content")]
+        public async Task<IActionResult> GetSchemaContent(Guid id)
         {
-            var dataObject = await _context.DataObjects.FindAsync(id);
+            var dataObject = await _context.DataObjects.FirstOrDefaultAsync(d => d.PublicId == id);
             if (dataObject == null || string.IsNullOrEmpty(dataObject.FileReference))
                 return NotFound();
 
@@ -150,12 +145,12 @@ namespace IntegrationMapper.Api.Controllers
             string contentType = dataObject.SchemaType == "XSD" ? "application/xml" : "application/json";
             return File(stream, contentType, Path.GetFileName(dataObject.FileReference));
         }
-        [HttpPost("data-objects/{id}/examples")]
-        public async Task<ActionResult<DataObjectExampleDto>> UploadExample(int id, [FromForm] IFormFile file)
+        [HttpPost("data-objects/{id:guid}/examples")]
+        public async Task<ActionResult<DataObjectExampleDto>> UploadExample(Guid id, [FromForm] IFormFile file)
         {
             var dataObject = await _context.DataObjects
                 .Include(d => d.Fields)
-                .FirstOrDefaultAsync(d => d.Id == id); // Include Fields for backfilling
+                .FirstOrDefaultAsync(d => d.PublicId == id);
 
             if (dataObject == null) return NotFound();
 
@@ -187,7 +182,7 @@ namespace IntegrationMapper.Api.Controllers
 
             var example = new DataObjectExample
             {
-                DataObjectId = id,
+                DataObjectId = dataObject.Id,
                 FileName = file.FileName,
                 FileStoragePath = fileReference,
                 UploadedAt = DateTime.UtcNow
@@ -198,16 +193,16 @@ namespace IntegrationMapper.Api.Controllers
 
             return Ok(new DataObjectExampleDto
             {
-                Id = example.Id,
+                Id = example.PublicId,
                 FileName = example.FileName,
                 UploadedAt = example.UploadedAt
             });
         }
 
-        [HttpGet("examples/{exampleId}/content")]
-        public async Task<IActionResult> GetExampleContent(int exampleId)
+        [HttpGet("examples/{exampleId:guid}/content")]
+        public async Task<IActionResult> GetExampleContent(Guid exampleId)
         {
-            var example = await _context.DataObjectExamples.FindAsync(exampleId);
+            var example = await _context.DataObjectExamples.FirstOrDefaultAsync(e => e.PublicId == exampleId);
             if (example == null) return NotFound();
 
             var stream = await _fileStorage.GetFileAsync(example.FileStoragePath);
@@ -221,10 +216,10 @@ namespace IntegrationMapper.Api.Controllers
             return File(stream, contentType, example.FileName);
         }
 
-        [HttpDelete("examples/{exampleId}")]
-        public async Task<IActionResult> DeleteExample(int exampleId)
+        [HttpDelete("examples/{exampleId:guid}")]
+        public async Task<IActionResult> DeleteExample(Guid exampleId)
         {
-            var example = await _context.DataObjectExamples.FindAsync(exampleId);
+            var example = await _context.DataObjectExamples.FirstOrDefaultAsync(e => e.PublicId == exampleId);
             if (example == null) return NotFound();
 
             await _fileStorage.DeleteFileAsync(example.FileStoragePath);

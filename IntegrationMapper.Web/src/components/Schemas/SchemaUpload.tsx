@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { SchemaApi } from '../../services/api';
 
 interface SchemaUploadProps {
-    systemId: number;
+    systemId: string;
     onUploadSuccess: () => void;
 }
 

@@ -3,17 +3,18 @@ import { SchemaApi, type DataObject } from '../../services/api';
 import SchemaViewerModal from '../Systems/SchemaViewerModal';
 
 import FileViewerModal from './FileViewerModal';
+import { commonStyles } from '../../styles/common';
 
 interface DataObjectListProps {
-    systemId: number;
+    systemId: string;
     refreshTrigger: number;
 }
 
 const DataObjectList: React.FC<DataObjectListProps> = ({ systemId, refreshTrigger }) => {
     const [objects, setObjects] = useState<DataObject[]>([]);
-    const [viewSchema, setViewSchema] = useState<{ id: number, name: string } | null>(null);
-    const [viewFile, setViewFile] = useState<{ id: number, name: string } | null>(null);
-    const [expandedId, setExpandedId] = useState<number | null>(null);
+    const [viewSchema, setViewSchema] = useState<{ id: string, name: string } | null>(null);
+    const [viewFile, setViewFile] = useState<{ id: string, name: string } | null>(null);
+    const [expandedId, setExpandedId] = useState<string | null>(null);
 
     useEffect(() => {
         loadObjects();
@@ -28,7 +29,7 @@ const DataObjectList: React.FC<DataObjectListProps> = ({ systemId, refreshTrigge
         }
     };
 
-    const handleUploadClick = (objId: number) => {
+    const handleUploadClick = (objId: string) => {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json,.xml';
@@ -54,7 +55,7 @@ const DataObjectList: React.FC<DataObjectListProps> = ({ systemId, refreshTrigge
         input.click();
     };
 
-    const handleDeleteExample = async (exampleId: number) => {
+    const handleDeleteExample = async (exampleId: string) => {
         if (!confirm("Are you sure you want to delete this example?")) return;
         try {
             await SchemaApi.deleteExample(exampleId);
@@ -64,7 +65,7 @@ const DataObjectList: React.FC<DataObjectListProps> = ({ systemId, refreshTrigge
         }
     };
 
-    const toggleExpand = (id: number) => {
+    const toggleExpand = (id: string) => {
         setExpandedId(expandedId === id ? null : id);
     };
 
@@ -74,10 +75,10 @@ const DataObjectList: React.FC<DataObjectListProps> = ({ systemId, refreshTrigge
             {objects.length === 0 ? (
                 <p>No data objects found.</p>
             ) : (
-                <ul style={{ listStyle: 'none', padding: 0 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                     {objects.map(obj => (
-                        <li key={obj.id} style={{ borderBottom: '1px solid #eee', marginBottom: '10px', paddingBottom: '10px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px' }}>
+                        <div key={obj.id} style={{ ...commonStyles.listItem, flexDirection: 'column', alignItems: 'stretch' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <span><strong>{obj.name}</strong> ({obj.schemaType})</span>
                                 <div>
                                     <button onClick={() => toggleExpand(obj.id)} style={{ marginRight: '5px' }}>
@@ -88,8 +89,9 @@ const DataObjectList: React.FC<DataObjectListProps> = ({ systemId, refreshTrigge
                                 </div>
                             </div>
 
+                            {/* Expandable Section */}
                             {expandedId === obj.id && (
-                                <div style={{ marginLeft: '20px', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '5px' }}>
+                                <div style={{ marginTop: '15px', padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '5px', border: '1px solid #eee' }}>
                                     <h5>Examples</h5>
                                     {(!obj.examples || obj.examples.length === 0) ? (
                                         <p style={{ fontStyle: 'italic', color: '#666' }}>No examples uploaded.</p>
@@ -116,9 +118,9 @@ const DataObjectList: React.FC<DataObjectListProps> = ({ systemId, refreshTrigge
                                     <button onClick={() => handleUploadClick(obj.id)}>+ Upload Example</button>
                                 </div>
                             )}
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             )}
 
             {viewSchema && (

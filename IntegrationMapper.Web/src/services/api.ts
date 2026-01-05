@@ -43,7 +43,7 @@ const downloadFile = async (url: string, filename: string) => {
 // --- Interfaces ---
 
 export interface IntegrationSystem {
-    id: number;
+    id: string; // Guid
     externalId: string;
     name: string;
     description: string;
@@ -58,14 +58,14 @@ export interface CreateSystemDto {
 }
 
 export interface DataObjectExampleDto {
-    id: number;
+    id: string; // Guid
     fileName: string;
     uploadedAt: string;
 }
 
 export interface DataObject {
-    id: number;
-    systemId: number;
+    id: string; // Guid
+    systemId: string; // Guid
     name: string;
     schemaType: string;
     fileReference?: string;
@@ -102,40 +102,40 @@ export interface FieldMappingSuggestionDto {
 }
 
 export interface MappingProfileDto {
-    id: number;
+    id: string; // Guid
     name: string;
-    sourceObjectId: number;
+    sourceObjectId: string; // Guid
     sourceObjectName?: string;
-    targetObjectId: number;
+    targetObjectId: string; // Guid
     targetObjectName?: string;
 }
 
 export interface MappingProject {
-    id: number;
+    id: string; // Guid
     name: string;
     description: string;
     createdDate: string;
-    sourceSystemId: number;
-    targetSystemId: number;
+    sourceSystemId: string; // Guid
+    targetSystemId: string; // Guid
     profiles: MappingProfileDto[];
 }
 
 export interface CreateProjectDto {
     name: string;
     description: string;
-    sourceSystemId: number;
-    targetSystemId: number;
+    sourceSystemPublicId: string; // Guid
+    targetSystemPublicId: string; // Guid
 }
 
 export interface CreateMappingProfileDto {
     name: string;
-    sourceObjectId: number;
-    targetObjectId: number;
+    sourceObjectPublicId: string; // Guid
+    targetObjectPublicId: string; // Guid
 }
 
 export interface MappingContextDto {
-    projectId: number;
-    profileId: number;
+    projectId: string; // Guid
+    profileId: string; // Guid
     sourceFields: FieldDefinitionDto[];
     targetFields: FieldDefinitionDto[];
     sourceExamples: DataObjectExampleDto[];
@@ -159,13 +159,19 @@ export const SystemApi = {
         });
         if (!response.ok) throw new Error('Failed to create system');
         return response.json();
+    },
+
+    getSystem: async (id: string): Promise<IntegrationSystem> => {
+        const response = await fetchWithAuth(`${API_BASE_url}/systems/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch system');
+        return response.json();
     }
 };
 
 export const SchemaApi = {
-    ingestSchema: async (systemId: number, name: string, file: File): Promise<any> => {
+    ingestSchema: async (systemId: string, name: string, file: File): Promise<any> => {
         const formData = new FormData();
-        formData.append('SystemId', systemId.toString());
+        formData.append('SystemPublicId', systemId);
         formData.append('Name', name);
         formData.append('File', file);
 
@@ -177,23 +183,23 @@ export const SchemaApi = {
         return response.json();
     },
 
-    getDataObjects: async (systemId: number): Promise<DataObject[]> => {
+    getDataObjects: async (systemId: string): Promise<DataObject[]> => {
         const response = await fetchWithAuth(`${API_BASE_url}/schemas/system/${systemId}`);
         if (!response.ok) throw new Error('Failed to fetch data objects');
         return response.json();
     },
 
-    downloadSchema: async (id: number, filename: string) => {
+    downloadSchema: async (id: string, filename: string) => {
         await downloadFile(`${API_BASE_url}/schemas/${id}/content`, filename);
     },
 
-    getSchemaContent: async (id: number): Promise<string> => {
+    getSchemaContent: async (id: string): Promise<string> => {
         const response = await fetchWithAuth(`${API_BASE_url}/schemas/${id}/content`);
         if (!response.ok) throw new Error('Failed to fetch schema content');
         return response.text();
     },
 
-    uploadExample: async (dataObjectId: number, file: File): Promise<DataObjectExampleDto> => {
+    uploadExample: async (dataObjectId: string, file: File): Promise<DataObjectExampleDto> => {
         const formData = new FormData();
         formData.append('file', file);
         const response = await fetchWithAuth(`${API_BASE_url}/schemas/data-objects/${dataObjectId}/examples`, {
@@ -204,14 +210,14 @@ export const SchemaApi = {
         return response.json();
     },
 
-    deleteExample: async (exampleId: number): Promise<void> => {
+    deleteExample: async (exampleId: string): Promise<void> => {
         const response = await fetchWithAuth(`${API_BASE_url}/schemas/examples/${exampleId}`, {
             method: 'DELETE'
         });
         if (!response.ok) throw new Error('Failed to delete example');
     },
 
-    getExampleContent: async (exampleId: number): Promise<string> => {
+    getExampleContent: async (exampleId: string): Promise<string> => {
         const response = await fetchWithAuth(`${API_BASE_url}/schemas/examples/${exampleId}/content`);
         if (!response.ok) throw new Error('Failed to fetch example content');
         return response.text();
@@ -228,10 +234,15 @@ export const ProjectApi = {
         return response.json();
     },
 
-    getProject: async (id: number): Promise<MappingProject> => {
+    getDetail: async (id: string): Promise<MappingProject> => {
         const response = await fetchWithAuth(`${API_BASE_url}/projects/${id}`);
         if (!response.ok) throw new Error('Failed to get project');
         return response.json();
+    },
+
+    // Legacy method - remove or alias to getDetail since id is publicId now
+    getByPublicId: async (publicId: string): Promise<MappingProject> => {
+        return ProjectApi.getDetail(publicId);
     },
 
     getAllProjects: async (): Promise<MappingProject[]> => {
@@ -240,7 +251,7 @@ export const ProjectApi = {
         return response.json();
     },
 
-    createProfile: async (projectId: number, profile: CreateMappingProfileDto): Promise<MappingProfileDto> => {
+    createProfile: async (projectId: string, profile: CreateMappingProfileDto): Promise<MappingProfileDto> => {
         const response = await fetchWithAuth(`${API_BASE_url}/projects/${projectId}/profiles`, {
             method: 'POST',
             body: JSON.stringify(profile),
@@ -251,13 +262,18 @@ export const ProjectApi = {
 };
 
 export const MappingApi = {
-    getMappingContext: async (profileId: number): Promise<MappingContextDto> => {
+    getMappingContext: async (profileId: string): Promise<MappingContextDto> => {
         const response = await fetchWithAuth(`${API_BASE_url}/profiles/${profileId}/map`);
         if (!response.ok) throw new Error('Failed to fetch mapping context');
         return response.json();
     },
 
-    saveMapping: async (profileId: number, mapping: FieldMappingDto): Promise<void> => {
+    // Legacy alias
+    getMappingContextByPublicId: async (publicId: string): Promise<MappingContextDto> => {
+        return MappingApi.getMappingContext(publicId);
+    },
+
+    saveMapping: async (profileId: string, mapping: FieldMappingDto): Promise<void> => {
         const response = await fetchWithAuth(`${API_BASE_url}/profiles/${profileId}/map`, {
             method: 'POST',
             body: JSON.stringify(mapping),
@@ -265,14 +281,14 @@ export const MappingApi = {
         if (!response.ok) throw new Error('Failed to save mapping');
     },
 
-    deleteMapping: async (profileId: number, targetFieldId: number): Promise<void> => {
+    deleteMapping: async (profileId: string, targetFieldId: number): Promise<void> => {
         const response = await fetchWithAuth(`${API_BASE_url}/profiles/${profileId}/map/${targetFieldId}`, {
             method: 'DELETE'
         });
         if (!response.ok) throw new Error('Failed to delete mapping');
     },
 
-    suggestMappings: async (profileId: number): Promise<FieldMappingSuggestionDto[]> => {
+    suggestMappings: async (profileId: string): Promise<FieldMappingSuggestionDto[]> => {
         const response = await fetchWithAuth(`${API_BASE_url}/profiles/${profileId}/suggest`, {
             method: 'POST'
         });
@@ -280,15 +296,15 @@ export const MappingApi = {
         return response.json();
     },
 
-    exportExcel: async (profileId: number, filename: string) => {
+    exportExcel: async (profileId: string, filename: string) => {
         await downloadFile(`${API_BASE_url}/profiles/${profileId}/export/excel`, filename);
     },
 
-    exportCSharp: async (profileId: number, filename: string) => {
+    exportCSharp: async (profileId: string, filename: string) => {
         await downloadFile(`${API_BASE_url}/profiles/${profileId}/export/csharp`, filename);
     },
 
-    getCSharpCode: async (profileId: number): Promise<string> => {
+    getCSharpCode: async (profileId: string): Promise<string> => {
         const response = await fetchWithAuth(`${API_BASE_url}/profiles/${profileId}/code/csharp`);
         if (!response.ok) throw new Error('Failed to fetch C# code');
         return response.text();

@@ -5,7 +5,7 @@ namespace IntegrationMapper.Infrastructure.Services
 {
     public class MappingService : IMappingService
     {
-        public async Task<MappingContextDto> GetMappingContextAsync(int projectId)
+        public async Task<MappingContextDto> GetMappingContextAsync(Guid projectId)
         {
             // Mock Implementation
             return await Task.FromResult(new MappingContextDto
@@ -17,7 +17,7 @@ namespace IntegrationMapper.Infrastructure.Services
             });
         }
 
-        public async Task SaveMappingAsync(int projectId, FieldMappingDto mapping)
+        public async Task SaveMappingAsync(Guid projectId, FieldMappingDto mapping)
         {
             // Mock Implementation
             await Task.CompletedTask;

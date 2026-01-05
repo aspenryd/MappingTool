@@ -20,29 +20,40 @@ namespace IntegrationMapper.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<IntegrationSystemDto>>> GetSystems()
         {
-            var systems = await _context.IntegrationSystems
-                .Select(s => new IntegrationSystemDto
-                {
-                    Id = s.Id,
-                    ExternalId = s.ExternalId,
-                    Name = s.Name,
-                    Description = s.Description,
-                    Category = s.Category
-                })
-                .ToListAsync();
+             var systems = await _context.IntegrationSystems.ToListAsync();
+             return Ok(systems.Select(s => new IntegrationSystemDto
+             {
+                 Id = s.PublicId,
+                 Name = s.Name,
+                 ExternalId = s.ExternalId,
+                 Category = s.Category,
+                 Description = s.Description
+             }).ToList());
+        }
 
-            return Ok(systems);
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<IntegrationSystemDto>> GetSystem(Guid id)
+        {
+            var s = await _context.IntegrationSystems.FirstOrDefaultAsync(x => x.PublicId == id);
+            if (s == null) return NotFound();
+
+            return Ok(new IntegrationSystemDto
+            {
+                Id = s.PublicId,
+                Name = s.Name,
+                ExternalId = s.ExternalId,
+                Category = s.Category,
+                Description = s.Description
+            });
         }
 
         [HttpPost]
         public async Task<ActionResult<IntegrationSystemDto>> CreateSystem([FromBody] CreateSystemDto dto)
         {
-            if (dto == null) return BadRequest();
-
             var system = new IntegrationSystem
             {
-                ExternalId = dto.ExternalId,
                 Name = dto.Name,
+                ExternalId = dto.ExternalId,
                 Description = dto.Description,
                 Category = dto.Category
             };
@@ -50,16 +61,14 @@ namespace IntegrationMapper.Api.Controllers
             _context.IntegrationSystems.Add(system);
             await _context.SaveChangesAsync();
 
-            var resultDto = new IntegrationSystemDto
+            return CreatedAtAction(nameof(GetSystem), new { id = system.PublicId }, new IntegrationSystemDto
             {
-                Id = system.Id,
-                ExternalId = system.ExternalId,
+                Id = system.PublicId,
                 Name = system.Name,
-                Description = system.Description,
-                Category = system.Category
-            };
-
-            return CreatedAtAction(nameof(GetSystems), new { id = resultDto.Id }, resultDto);
+                ExternalId = system.ExternalId,
+                Category = system.Category,
+                Description = system.Description
+            });
         }
     }
 }

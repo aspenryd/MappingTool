@@ -2,7 +2,13 @@ namespace IntegrationMapper.Core.DTOs
 {
     public class FieldDefinitionDto
     {
-        public int Id { get; set; }
+        public int Id { get; set; } // Keep internal ID for field definition or remove? FieldDefinition IDs are internal.
+        // FieldDefinition might need PublicId if we want to be strict, but they are children of Context.
+        // Let's stick to High Level Entities first (Project, System, Profile). 
+        // User said "don't expose internal Ids at all from the API". 
+        // Fields might be too granular to add Guids to every single one right now without database migration pain if it was real DB.
+        // But for InMemory it's free. 
+        // Let's focus on System/Project/Profile/Context first. Field Definitions are usually just nested data.
         public string Path { get; set; }
         public string Name { get; set; }
         public string DataType { get; set; }
@@ -20,42 +26,46 @@ namespace IntegrationMapper.Core.DTOs
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public int SourceSystemId { get; set; }
-        public int TargetSystemId { get; set; }
+        public Guid SourceSystemId { get; set; } // Renaming to Id for consistency in DTO or PublicId? 
+        // Let's use SourceSystemPublicId to be explicit
+        public Guid SourceSystemPublicId { get; set; }
+        public Guid TargetSystemPublicId { get; set; }
     }
 
     public class CreateMappingProfileDto
     {
         public string Name { get; set; }
-        public int SourceObjectId { get; set; }
-        public int TargetObjectId { get; set; }
+        public Guid SourceObjectPublicId { get; set; }
+        public Guid TargetObjectPublicId { get; set; }
     }
 
     public class MappingProfileDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } // Expose PublicId as "Id" to frontend? Or keep "PublicId"?
+        // User said "don't expose internal Id". So "Id" in DTO should be the Guid.
+        // This is cleaner for frontend "id" usage.
         public string Name { get; set; }
-        public int SourceObjectId { get; set; }
+        public Guid SourceObjectId { get; set; }
         public string SourceObjectName { get; set; }
-        public int TargetObjectId { get; set; }
+        public Guid TargetObjectId { get; set; }
         public string TargetObjectName { get; set; }
     }
 
     public class MappingProjectDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } // PublicId exposed as Id
         public string Name { get; set; }
         public string Description { get; set; }
-        public int SourceSystemId { get; set; }
-        public int TargetSystemId { get; set; }
+        public Guid SourceSystemId { get; set; }
+        public Guid TargetSystemId { get; set; }
         public string CreatedDate { get; set; }
         public List<MappingProfileDto> Profiles { get; set; } = new();
     }
 
     public class MappingContextDto
     {
-        public int ProfileId { get; set; }
-        public int ProjectId { get; set; }
+        public Guid ProfileId { get; set; }
+        public Guid ProjectId { get; set; }
         public List<FieldDefinitionDto> SourceFields { get; set; } = new();
         public List<FieldDefinitionDto> TargetFields { get; set; } = new();
         public List<DataObjectExampleDto> SourceExamples { get; set; } = new();

@@ -27,23 +27,30 @@ namespace IntegrationMapper.Api.Controllers
         public async Task<ActionResult<List<MappingProjectDto>>> GetProjects()
         {
             var projects = await _context.MappingProjects
+                .Include(p => p.SourceSystem)
+                .Include(p => p.TargetSystem)
                 .Include(p => p.Profiles)
+                    .ThenInclude(pr => pr.SourceObject)
+                .Include(p => p.Profiles)
+                    .ThenInclude(pr => pr.TargetObject)
                 .ToListAsync();
 
             return Ok(projects.Select(p => new MappingProjectDto
             {
-                Id = p.Id,
+                Id = p.PublicId,
                 Name = p.Name,
                 Description = p.Description,
-                SourceSystemId = p.SourceSystemId,
-                TargetSystemId = p.TargetSystemId,
+                SourceSystemId = p.SourceSystem?.PublicId ?? Guid.Empty,
+                TargetSystemId = p.TargetSystem?.PublicId ?? Guid.Empty,
                 CreatedDate = p.CreatedDate.ToString("O"),
                 Profiles = p.Profiles.Select(prof => new MappingProfileDto
                 {
-                    Id = prof.Id,
+                    Id = prof.PublicId,
                     Name = prof.Name,
-                    SourceObjectId = prof.SourceObjectId,
-                    TargetObjectId = prof.TargetObjectId
+                    SourceObjectId = prof.SourceObject?.PublicId ?? Guid.Empty,
+                    TargetObjectId = prof.TargetObject?.PublicId ?? Guid.Empty,
+                    SourceObjectName = prof.SourceObject?.Name,
+                    TargetObjectName = prof.TargetObject?.Name
                 }).ToList()
             }));
         }
@@ -51,95 +58,113 @@ namespace IntegrationMapper.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<MappingProjectDto>> CreateProject([FromBody] CreateMappingProjectDto dto)
         {
+            var sourceSystem = await _context.IntegrationSystems.FirstOrDefaultAsync(s => s.PublicId == dto.SourceSystemPublicId);
+            var targetSystem = await _context.IntegrationSystems.FirstOrDefaultAsync(s => s.PublicId == dto.TargetSystemPublicId);
+
+            if (sourceSystem == null || targetSystem == null) return BadRequest("Invalid Source or Target System Public Id");
+
             var project = new MappingProject
             {
                 Name = dto.Name,
                 Description = dto.Description,
-                SourceSystemId = dto.SourceSystemId,
-                TargetSystemId = dto.TargetSystemId,
+                SourceSystemId = sourceSystem.Id,
+                TargetSystemId = targetSystem.Id,
                 CreatedDate = DateTime.UtcNow
             };
 
             _context.MappingProjects.Add(project);
             await _context.SaveChangesAsync();
-
+            
+            // Reload to get properly populated state or construct manually
             return Ok(new MappingProjectDto
             {
-                Id = project.Id,
+                Id = project.PublicId,
                 Name = project.Name,
                 Description = project.Description,
-                SourceSystemId = project.SourceSystemId,
-                TargetSystemId = project.TargetSystemId,
+                SourceSystemId = sourceSystem.PublicId,
+                TargetSystemId = targetSystem.PublicId,
                 CreatedDate = project.CreatedDate.ToString("O")
             });
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MappingProjectDto>> GetProject(int id)
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<MappingProjectDto>> GetProject(Guid id)
         {
-            var project = await _context.MappingProjects
+             var project = await _context.MappingProjects
+                .Include(p => p.SourceSystem)
+                .Include(p => p.TargetSystem)
                 .Include(p => p.Profiles)
                     .ThenInclude(prof => prof.SourceObject)
                 .Include(p => p.Profiles)
                     .ThenInclude(prof => prof.TargetObject)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.PublicId == id);
 
             if (project == null) return NotFound();
 
             return Ok(new MappingProjectDto
             {
-                Id = project.Id,
+                Id = project.PublicId,
                 Name = project.Name,
                 Description = project.Description,
-                SourceSystemId = project.SourceSystemId,
-                TargetSystemId = project.TargetSystemId,
+                SourceSystemId = project.SourceSystem?.PublicId ?? Guid.Empty,
+                TargetSystemId = project.TargetSystem?.PublicId ?? Guid.Empty,
                 CreatedDate = project.CreatedDate.ToString("O"),
                 Profiles = project.Profiles.Select(prof => new MappingProfileDto
                 {
-                    Id = prof.Id,
+                    Id = prof.PublicId,
                     Name = prof.Name,
-                    SourceObjectId = prof.SourceObjectId,
+                    SourceObjectId = prof.SourceObject?.PublicId ?? Guid.Empty,
+                    TargetObjectId = prof.TargetObject?.PublicId ?? Guid.Empty,
                     SourceObjectName = prof.SourceObject?.Name,
-                    TargetObjectId = prof.TargetObjectId,
                     TargetObjectName = prof.TargetObject?.Name
                 }).ToList()
             });
         }
+        
+        // Removed legacy GetProject(int) and GetProjectByPublicId(Guid) duplication. The above handles "GetProject" via Guid.
 
-        [HttpPost("{id}/profiles")]
-        public async Task<ActionResult<MappingProfileDto>> CreateProfile(int id, [FromBody] CreateMappingProfileDto dto)
+        [HttpPost("{id:guid}/profiles")]
+        public async Task<ActionResult<MappingProfileDto>> CreateProfile(Guid id, [FromBody] CreateMappingProfileDto dto)
         {
-            var project = await _context.MappingProjects.FindAsync(id);
+            var project = await _context.MappingProjects.FirstOrDefaultAsync(p => p.PublicId == id);
             if (project == null) return NotFound("Project not found");
+
+            var sourceObj = await _context.DataObjects.FirstOrDefaultAsync(d => d.PublicId == dto.SourceObjectPublicId);
+            var targetObj = await _context.DataObjects.FirstOrDefaultAsync(d => d.PublicId == dto.TargetObjectPublicId);
+
+            if (sourceObj == null || targetObj == null) return BadRequest("Source or Target Object not found");
 
             var profile = new MappingProfile
             {
-                MappingProjectId = id,
+                MappingProjectId = project.Id,
                 Name = dto.Name,
-                SourceObjectId = dto.SourceObjectId,
-                TargetObjectId = dto.TargetObjectId
+                SourceObjectId = sourceObj.Id,
+                TargetObjectId = targetObj.Id
             };
 
             _context.MappingProfiles.Add(profile);
             await _context.SaveChangesAsync();
             
-            // Reload to get Object names if needed, or just return basic
             return Ok(new MappingProfileDto
             {
-                Id = profile.Id,
+                Id = profile.PublicId,
                 Name = profile.Name,
-                SourceObjectId = profile.SourceObjectId,
-                TargetObjectId = profile.TargetObjectId
+                SourceObjectId = sourceObj.PublicId,
+                TargetObjectId = targetObj.PublicId,
+                SourceObjectName = sourceObj.Name,
+                TargetObjectName = targetObj.Name
             });
         }
 
-        [HttpGet("/api/profiles/{profileId}/map")]
-        public async Task<ActionResult<MappingContextDto>> GetMappingContext(int profileId)
+        // Consolidating GetMappingContext logic to only use PublicId
+        [HttpGet("/api/profiles/{publicId:guid}/map")]
+        public async Task<ActionResult<MappingContextDto>> GetMappingContext(Guid publicId)
         {
             var profile = await _context.MappingProfiles
+                .Include(p => p.MappingProject)
                 .Include(p => p.Mappings)
                     .ThenInclude(m => m.Sources)
-                .FirstOrDefaultAsync(p => p.Id == profileId);
+                .FirstOrDefaultAsync(p => p.PublicId == publicId);
 
             if (profile == null) return NotFound("Profile not found");
 
@@ -163,19 +188,19 @@ namespace IntegrationMapper.Api.Controllers
 
             return Ok(new MappingContextDto
             {
-                ProjectId = profile.MappingProjectId,
-                ProfileId = profile.Id,
+                ProjectId = profile.MappingProject?.PublicId ?? Guid.Empty,
+                ProfileId = profile.PublicId,
                 SourceFields = sourceFields,
                 TargetFields = targetFields,
                 SourceExamples = sourceHeader.Examples.Select(e => new DataObjectExampleDto 
                 { 
-                    Id = e.Id, 
+                    Id = e.PublicId, 
                     FileName = e.FileName, 
                     UploadedAt = e.UploadedAt 
                 }).ToList(),
                 TargetExamples = targetHeader.Examples.Select(e => new DataObjectExampleDto 
                 { 
-                    Id = e.Id, 
+                    Id = e.PublicId, 
                     FileName = e.FileName, 
                     UploadedAt = e.UploadedAt 
                 }).ToList(),
@@ -190,15 +215,23 @@ namespace IntegrationMapper.Api.Controllers
                 }).ToList()
             });
         }
+        // Removed duplicate GetMappingContextByPublicId logic.
 
-        [HttpPost("/api/profiles/{profileId}/map")]
-        public async Task<IActionResult> SaveMapping(int profileId, [FromBody] FieldMappingDto mappingDto)
+
+
+        [HttpPost("/api/profiles/{profileId:guid}/map")]
+        public async Task<IActionResult> SaveMapping(Guid profileId, [FromBody] FieldMappingDto mappingDto)
         {
             if (mappingDto == null) return BadRequest();
 
+            // Resolve ID
+            var profile = await _context.MappingProfiles.FirstOrDefaultAsync(p => p.PublicId == profileId);
+            if (profile == null) return NotFound("Profile not found");
+            int intProfileId = profile.Id;
+
             var existing = await _context.FieldMappings
                 .Include(m => m.Sources)
-                .FirstOrDefaultAsync(m => m.ProfileId == profileId && m.TargetFieldId == mappingDto.TargetFieldId);
+                .FirstOrDefaultAsync(m => m.ProfileId == intProfileId && m.TargetFieldId == mappingDto.TargetFieldId);
 
             if (existing != null)
             {
@@ -231,7 +264,7 @@ namespace IntegrationMapper.Api.Controllers
             {
                 var mapping = new FieldMapping
                 {
-                    ProfileId = profileId,
+                    ProfileId = intProfileId,
                     TargetFieldId = mappingDto.TargetFieldId,
                     TransformationLogic = mappingDto.TransformationLogic
                 };
@@ -258,11 +291,14 @@ namespace IntegrationMapper.Api.Controllers
             return Ok();
         }
 
-        [HttpDelete("/api/profiles/{profileId}/map/{targetFieldId}")]
-        public async Task<IActionResult> DeleteMapping(int profileId, int targetFieldId)
+        [HttpDelete("/api/profiles/{profileId:guid}/map/{targetFieldId}")]
+        public async Task<IActionResult> DeleteMapping(Guid profileId, int targetFieldId)
         {
+             var profile = await _context.MappingProfiles.FirstOrDefaultAsync(p => p.PublicId == profileId);
+             if (profile == null) return NotFound("Profile not found");
+             
             var mapping = await _context.FieldMappings
-                .FirstOrDefaultAsync(m => m.ProfileId == profileId && m.TargetFieldId == targetFieldId);
+                .FirstOrDefaultAsync(m => m.ProfileId == profile.Id && m.TargetFieldId == targetFieldId);
 
             if (mapping == null) return NotFound();
 
@@ -272,12 +308,12 @@ namespace IntegrationMapper.Api.Controllers
             return NoContent();
         }
 
-         [HttpPost("/api/profiles/{profileId}/suggest")]
-        public async Task<ActionResult<List<FieldMappingSuggestionDto>>> SuggestMappings(int profileId, [FromServices] IAiMappingService aiService)
+        [HttpPost("/api/profiles/{profileId}/suggest")]
+        public async Task<ActionResult<List<FieldMappingSuggestionDto>>> SuggestMappings(Guid profileId, [FromServices] IAiMappingService aiService)
         {
              var profile = await _context.MappingProfiles
                  .Include(p => p.Mappings)
-                 .FirstOrDefaultAsync(p => p.Id == profileId);
+                 .FirstOrDefaultAsync(p => p.PublicId == profileId);
 
              if (profile == null) return NotFound("Profile not found");
 
@@ -306,24 +342,25 @@ namespace IntegrationMapper.Api.Controllers
         }
 
         [HttpGet("/api/profiles/{profileId}/export/excel")]
-        public async Task<IActionResult> ExportExcel(int profileId)
+        public async Task<IActionResult> ExportExcel(Guid profileId)
         {
             var profile = await _context.MappingProfiles
                 .Include(p => p.Mappings)
+                    .ThenInclude(m => m.Sources) // Include sources
                 .Include(p => p.MappingProject)
-                .FirstOrDefaultAsync(p => p.Id == profileId);
+                .FirstOrDefaultAsync(p => p.PublicId == profileId);
 
             if (profile == null) return NotFound();
 
-            var sourceHeader = await _context.DataObjects
-                .Include(d => d.System)
-                .Include(d => d.Fields)
-                .FirstOrDefaultAsync(d => d.Id == profile.SourceObjectId);
-
             var targetHeader = await _context.DataObjects
-                .Include(d => d.System)
-                .Include(d => d.Fields)
-                .FirstOrDefaultAsync(d => d.Id == profile.TargetObjectId);
+                                        .Include(d => d.System)
+                                        .Include(d => d.Fields)
+                                        .FirstAsync(d => d.Id == profile.TargetObjectId);
+
+            var sourceHeader = await _context.DataObjects
+                                        .Include(d => d.System)
+                                        .Include(d => d.Fields)
+                                        .FirstAsync(d => d.Id == profile.SourceObjectId);
 
             if (sourceHeader == null || targetHeader == null) return NotFound("Data Objects not found");
 
@@ -435,7 +472,7 @@ namespace IntegrationMapper.Api.Controllers
         }
 
         [HttpGet("/api/profiles/{profileId}/export/csharp")]
-        public async Task<IActionResult> ExportCSharp(int profileId)
+        public async Task<IActionResult> ExportCSharp(Guid profileId)
         {
             var code = await GenerateCSharpCode(profileId);
             if (code == null) return NotFound();
@@ -444,19 +481,19 @@ namespace IntegrationMapper.Api.Controllers
         }
 
         [HttpGet("/api/profiles/{profileId}/code/csharp")]
-        public async Task<ActionResult<string>> GetCSharpCode(int profileId)
+        public async Task<ActionResult<string>> GetCSharpCode(Guid profileId)
         {
             var code = await GenerateCSharpCode(profileId);
             if (code == null) return NotFound();
             return Ok(code);
         }
 
-        private async Task<string> GenerateCSharpCode(int profileId)
+        private async Task<string> GenerateCSharpCode(Guid profileId)
         {
             var profile = await _context.MappingProfiles
                 .Include(p => p.Mappings)
                     .ThenInclude(m => m.Sources)
-                .FirstOrDefaultAsync(p => p.Id == profileId);
+                .FirstOrDefaultAsync(p => p.PublicId == profileId);
             
              if (profile == null) return null;
 

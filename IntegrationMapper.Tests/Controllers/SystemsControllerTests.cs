@@ -53,7 +53,7 @@ namespace IntegrationMapper.Tests.Controllers
             var createdAtResult = Assert.IsType<CreatedAtActionResult>(result.Result);
             var systemDto = Assert.IsType<IntegrationSystemDto>(createdAtResult.Value);
             Assert.Equal("NewSys", systemDto.Name);
-            Assert.NotEqual(0, systemDto.Id);
+            Assert.NotEqual(Guid.Empty, systemDto.Id);
             
             // Verify DB
             Assert.Single(context.IntegrationSystems);

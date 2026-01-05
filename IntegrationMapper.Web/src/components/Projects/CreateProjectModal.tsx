@@ -4,14 +4,14 @@ import { ProjectApi, SystemApi, type IntegrationSystem } from '../../services/ap
 interface CreateProjectModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onProjectCreated: (id: number) => void;
+    onProjectCreated: (id: string) => void;
 }
 
 const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose, onProjectCreated }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [sourceSystemId, setSourceSystemId] = useState<number | ''>('');
-    const [targetSystemId, setTargetSystemId] = useState<number | ''>('');
+    const [sourceSystemId, setSourceSystemId] = useState<string>('');
+    const [targetSystemId, setTargetSystemId] = useState<string>('');
     const [systems, setSystems] = useState<IntegrationSystem[]>([]);
 
     React.useEffect(() => {
@@ -32,8 +32,8 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
             const project = await ProjectApi.createProject({
                 name,
                 description,
-                sourceSystemId: Number(sourceSystemId),
-                targetSystemId: Number(targetSystemId)
+                sourceSystemPublicId: sourceSystemId,
+                targetSystemPublicId: targetSystemId
             });
             onProjectCreated(project.id);
             onClose();
@@ -84,7 +84,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
                             <label>Source System:</label>
                             <select
                                 value={sourceSystemId}
-                                onChange={e => setSourceSystemId(Number(e.target.value))}
+                                onChange={e => setSourceSystemId(e.target.value)}
                                 required
                                 style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                             >
@@ -98,7 +98,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
                             <label>Target System:</label>
                             <select
                                 value={targetSystemId}
-                                onChange={e => setTargetSystemId(Number(e.target.value))}
+                                onChange={e => setTargetSystemId(e.target.value)}
                                 required
                                 style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                             >

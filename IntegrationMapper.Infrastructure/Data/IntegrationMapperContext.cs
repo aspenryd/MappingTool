@@ -42,7 +42,7 @@ namespace IntegrationMapper.Infrastructure.Data
                 
                 entity.HasOne(d => d.System)
                       .WithMany(p => p.DataObjects)
-                      .HasForeignKey(d => d.SystemId)
+                      .HasForeignKey(d => d.IntegrationSystemId)
                       .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasMany(d => d.Examples)
