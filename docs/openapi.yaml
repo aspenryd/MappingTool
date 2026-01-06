@@ -1,16 +1,745 @@
 openapi: 3.0.1
 info:
-  title: Integration Mapper API
+  title: IntegrationMapper.Api | v1
   version: 1.0.0
-  description: >
-    The OpenAPI specification for this project is generated at runtime given the Code-First approach.
-    
-    Please run the Backend API and visit:
-    http://localhost:5000/scalar/v1
-    
-    or
-    
-    http://localhost:5000/swagger/index.html (if configured)
 servers:
-  - url: http://localhost:5000
-    description: Local Development Server
+  - url: http://localhost:5000/
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - DevAuth
+      responses:
+        '200':
+          description: OK
+  /api/projects:
+    get:
+      tags:
+        - Mappings
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MappingProjectDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MappingProjectDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MappingProjectDto'
+    post:
+      tags:
+        - Mappings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMappingProjectDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateMappingProjectDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateMappingProjectDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MappingProjectDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MappingProjectDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MappingProjectDto'
+  /api/projects/{id}:
+    get:
+      tags:
+        - Mappings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MappingProjectDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MappingProjectDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MappingProjectDto'
+  /api/projects/{id}/profiles:
+    post:
+      tags:
+        - Mappings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMappingProfileDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateMappingProfileDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateMappingProfileDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MappingProfileDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MappingProfileDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MappingProfileDto'
+  /api/profiles/{publicId}/map:
+    get:
+      tags:
+        - Mappings
+      parameters:
+        - name: publicId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MappingContextDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MappingContextDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MappingContextDto'
+  /api/profiles/{profileId}/map:
+    post:
+      tags:
+        - Mappings
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldMappingDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/FieldMappingDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/FieldMappingDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+  /api/profiles/{profileId}/map/{targetFieldId}:
+    delete:
+      tags:
+        - Mappings
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: targetFieldId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+  /api/profiles/{profileId}/suggest:
+    post:
+      tags:
+        - Mappings
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FieldMappingSuggestionDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FieldMappingSuggestionDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FieldMappingSuggestionDto'
+  /api/profiles/{profileId}/export/excel:
+    get:
+      tags:
+        - Mappings
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/profiles/{profileId}/export/csharp:
+    get:
+      tags:
+        - Mappings
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/profiles/{profileId}/code/csharp:
+    get:
+      tags:
+        - Mappings
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+  /api/schemas/ingest:
+    post:
+      tags:
+        - Schemas
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                SystemPublicId:
+                  type: string
+                  format: uuid
+                Name:
+                  type: string
+                File:
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/SchemaUploadResponseDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaUploadResponseDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/SchemaUploadResponseDto'
+  /api/schemas/system/{systemPublicId}:
+    get:
+      tags:
+        - Schemas
+      parameters:
+        - name: systemPublicId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataObjectDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataObjectDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataObjectDto'
+  /api/schemas/{id}/content:
+    get:
+      tags:
+        - Schemas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/schemas/data-objects/{id}/examples:
+    post:
+      tags:
+        - Schemas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                ContentType:
+                  type: string
+                ContentDisposition:
+                  type: string
+                Headers:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                Length:
+                  type: integer
+                  format: int64
+                Name:
+                  type: string
+                FileName:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/DataObjectExampleDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectExampleDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectExampleDto'
+  /api/schemas/examples/{exampleId}/content:
+    get:
+      tags:
+        - Schemas
+      parameters:
+        - name: exampleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/schemas/examples/{exampleId}:
+    delete:
+      tags:
+        - Schemas
+      parameters:
+        - name: exampleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/systems:
+    get:
+      tags:
+        - Systems
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IntegrationSystemDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IntegrationSystemDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IntegrationSystemDto'
+    post:
+      tags:
+        - Systems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSystemDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateSystemDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateSystemDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/IntegrationSystemDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationSystemDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationSystemDto'
+  /api/systems/{id}:
+    get:
+      tags:
+        - Systems
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/IntegrationSystemDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationSystemDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationSystemDto'
+components:
+  schemas:
+    CreateMappingProfileDto:
+      type: object
+      properties:
+        name:
+          type: string
+        sourceObjectPublicId:
+          type: string
+          format: uuid
+        targetObjectPublicId:
+          type: string
+          format: uuid
+    CreateMappingProjectDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        sourceSystemId:
+          type: string
+          format: uuid
+        sourceSystemPublicId:
+          type: string
+          format: uuid
+        targetSystemPublicId:
+          type: string
+          format: uuid
+    CreateSystemDto:
+      type: object
+      properties:
+        externalId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+    DataObjectDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        systemPublicId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        schemaType:
+          type: string
+        fileReference:
+          type: string
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataObjectExampleDto'
+    DataObjectExampleDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        uploadedAt:
+          type: string
+          format: date-time
+    FieldDefinitionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        path:
+          type: string
+        name:
+          type: string
+        dataType:
+          type: string
+        length:
+          type: integer
+          format: int32
+          nullable: true
+        isArray:
+          type: boolean
+        isMandatory:
+          type: boolean
+        schemaAttributes:
+          type: string
+          nullable: true
+        description:
+          type: string
+        exampleValue:
+          type: string
+        sampleValues:
+          type: array
+          items:
+            type: string
+        children:
+          type: array
+          items: {}
+    FieldMappingDto:
+      type: object
+      properties:
+        sourceFieldId:
+          type: integer
+          format: int32
+          nullable: true
+        targetFieldId:
+          type: integer
+          format: int32
+        transformationLogic:
+          type: string
+          nullable: true
+        sourceFieldIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+    FieldMappingSuggestionDto:
+      type: object
+      properties:
+        sourceFieldId:
+          type: integer
+          format: int32
+        targetFieldId:
+          type: integer
+          format: int32
+        confidence:
+          type: number
+          format: double
+        reasoning:
+          type: string
+    IntegrationSystemDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        externalId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+    MappingContextDto:
+      type: object
+      properties:
+        profileId:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        sourceFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDefinitionDto'
+        targetFields:
+          type: array
+          items: {}
+        sourceExamples:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataObjectExampleDto'
+        targetExamples:
+          type: array
+          items: {}
+        existingMappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldMappingDto'
+    MappingProfileDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        sourceObjectId:
+          type: string
+          format: uuid
+        sourceObjectName:
+          type: string
+        targetObjectId:
+          type: string
+          format: uuid
+        targetObjectName:
+          type: string
+    MappingProjectDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        sourceSystemId:
+          type: string
+          format: uuid
+        targetSystemId:
+          type: string
+          format: uuid
+        createdDate:
+          type: string
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/MappingProfileDto'
+    SchemaUploadResponseDto:
+      type: object
+      properties:
+        dataObjectPublicId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        fieldCount:
+          type: integer
+          format: int32
+  securitySchemes:
+    Bearer:
+      type: http
+      description: Enter your JWT Bearer token
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - Bearer: []
+tags:
+  - name: DevAuth
+  - name: Mappings
+  - name: Schemas
+  - name: Systems
