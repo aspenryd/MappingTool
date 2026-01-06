@@ -6,23 +6,29 @@ This document outlines the business, security, and technical requirements for th
 
 The primary goal of the frontend is to provide a user-friendly interface for designing integration mappings between systems.
 
-### 1.1 Project Management
-*   **Dashboard**: Users must be able to view a list of all existing mapping projects.
-*   **Search**: Users must be able to filter projects by name or involved systems.
-*   **Creation**: Users must be able to create new mapping projects by defining a name and selecting Source and Target systems.
 
-### 1.2 Schema Management
-*   **System Definition**: Users must be able to define "Systems" (e.g., ERP, CRM) that serve as sources or targets.
-*   **Schema Ingestion**: The application must support ingesting schemas (JSON/XML/XSD) for these systems to define the available data structures.
+
+### 1.1 System Management
+*   **System Definition**: Users must be able to add and define "Systems" (e.g., ERP, CRM) that serve as sources or targets.
+*   **Search**: Users must be able to filter system by free text searching name or description.
+*   **Data Object**: Users must be able to define Data object that the system can import or export
+*   **Schema Ingestion**: The user must support ingesting schemas (JSON/XML/XSD) for these data objects to define the available data structures.
+*   **Example Ingestion**: The user must support ingesting examples (JSON/XML) for these data objects to have as reference.
+
+### 1.2 Project Management
+*   **Dashboard**: Users must be able to view a list of all existing mapping projects.
+*   **Search**: Users must be able to filter projects by name involved systems or data objects.
+*   **Creation**: Users must be able to create new mapping projects by defining a name and selecting Source and Target systems.
+*   **Mapping**: Users must be able to define one to many mappings between Source and Target data objects.
 
 ### 1.3 Map Design (Core Feature)
-*   **Visual Editor**: A node-based canvas (Visual Mapper) is required to represent Source and Target fields side-by-side.
+*   **Visual Editor**: A node-based canvas (Visual Mapper) is required to represent Source and Target fields side-by-side. The canvas should be able to handle large number of nodes and connections. The canvas should present fieldname, structure, schema information and example values for each node.
 *   **Drag-and-Drop**: Users should map fields by dragging connections from Source to Target nodes.
-*   **Auto-Mapping**: The system should provide an "Auto-Map" feature to suggest mappings based on field names and types.
+*   **Auto-Mapping**: The system should provide an "Auto-Map" feature to suggest mappings based on field names, structure paths and types using the API endpoint `/api/mappings/suggest`.
 *   **Transformation Logic**: Users must be able to define transformation logic or add comments for each specific mapping connection (e.g., "Concat First + Last Name").
 
 ### 1.4 Code Generation & Export
-*   **Real-time Preview**: Users should be able to view the generated C# mapping code in real-time within the browser.
+*   **Real-time Preview**: Users should be able to view the generated C# mapping code in real-time within the browser. Code is generated in the backend and provided to the frontend via "[mappingId]/code/csharp" endpoint.
 *   **Download**: The application must support downloading the mapping definition as:
     *   Executable C# code (`.cs`).
     *   Documentation/Specification Excel sheets (`.xlsx`).
