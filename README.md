@@ -12,7 +12,7 @@ Integration Mapper is a full-stack solution designed to simplify the process of 
 
 The solution follows a **Clean Architecture** approach:
 
-*   **IntegrationMapper.Web**: Frontend application built with **React**, **Vite**, and **TypeScript**. It uses **React Flow** for the visual mapping canvas.
+*   **IntegrationMapper.Web2**: Frontend application built with **React**, **Vite**, and **TypeScript**. It uses **React Flow** for the visual mapping canvas.
 *   **IntegrationMapper.Api**: Backend REST API built with **ASP.NET Core (.NET 9)**. It handles data persistence, authentication, and external service integration.
 *   **IntegrationMapper.Core**: Contains the domain entities, interfaces, and DTOs. It has no external dependencies.
 *   **IntegrationMapper.Infrastructure**: Implements the interfaces defined in Core, including data access (Entity Framework Core) and services (AI, Schema Parsing).
@@ -48,7 +48,7 @@ The solution follows a **Clean Architecture** approach:
 3.  **Frontend Setup**:
     Navigate to the web project directory:
     ```bash
-    cd IntegrationMapper.Web
+    cd IntegrationMapper.Web2
     npm install
     ```
 
@@ -67,12 +67,12 @@ Swagger UI/Scalar is available at `http://localhost:5000/scalar/v1` (in Developm
 
 ### 2. Start the Frontend
 
-In a separate terminal, navigate to `IntegrationMapper.Web` and start the Vite dev server:
+In a separate terminal, navigate to `IntegrationMapper.Web2` and start the Vite dev server:
 ```bash
-cd IntegrationMapper.Web
+cd IntegrationMapper.Web2
 npm run dev
 ```
-The application will be accessible at `http://localhost:3000`.
+The application will be accessible at `http://localhost:4000`.
 
 ## Configuration
 
