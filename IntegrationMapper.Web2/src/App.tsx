@@ -44,23 +44,25 @@ function App() {
 
           {/* Role Toggle - only in dev mode */}
           {import.meta.env.DEV && (
-            <div className="flex items-center justify-center gap-3 bg-white rounded-lg px-4 py-3 shadow-sm border border-slate-200">
-              <span className={`text-sm font-medium ${!loginAsAdmin ? 'text-blue-600' : 'text-slate-400'}`}>
-                User
-              </span>
+            <div className="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
               <button
-                onClick={() => setLoginAsAdmin(!loginAsAdmin)}
-                className={`relative w-12 h-6 rounded-full transition-colors ${loginAsAdmin ? 'bg-purple-600' : 'bg-slate-300'
+                onClick={() => setLoginAsAdmin(false)}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${!loginAsAdmin
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
                   }`}
               >
-                <span
-                  className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${loginAsAdmin ? 'translate-x-7' : 'translate-x-1'
-                    }`}
-                />
+                User
               </button>
-              <span className={`text-sm font-medium ${loginAsAdmin ? 'text-purple-600' : 'text-slate-400'}`}>
+              <button
+                onClick={() => setLoginAsAdmin(true)}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${loginAsAdmin
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                  }`}
+              >
                 Admin
-              </span>
+              </button>
             </div>
           )}
 
