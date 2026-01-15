@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useCreateProject, useSystems } from '../../api/hooks'
 import { Modal, Button, Input, toast } from '../../components/ui'
 
@@ -22,6 +22,29 @@ export function CreateProjectModal({
     sourceSystemPublicId: '',
     targetSystemPublicId: '',
   })
+
+  const [sourceFilter, setSourceFilter] = useState('')
+  const [targetFilter, setTargetFilter] = useState('')
+
+  const filteredSourceSystems = useMemo(() => {
+    if (!systems) return []
+    if (!sourceFilter.trim()) return systems
+    const term = sourceFilter.toLowerCase()
+    return systems.filter(s =>
+      s.name?.toLowerCase().includes(term) ||
+      s.category?.toLowerCase().includes(term)
+    )
+  }, [systems, sourceFilter])
+
+  const filteredTargetSystems = useMemo(() => {
+    if (!systems) return []
+    if (!targetFilter.trim()) return systems
+    const term = targetFilter.toLowerCase()
+    return systems.filter(s =>
+      s.name?.toLowerCase().includes(term) ||
+      s.category?.toLowerCase().includes(term)
+    )
+  }, [systems, targetFilter])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,6 +73,8 @@ export function CreateProjectModal({
         sourceSystemPublicId: '',
         targetSystemPublicId: '',
       })
+      setSourceFilter('')
+      setTargetFilter('')
       onCreated(result.id)
     } catch {
       toast('Failed to create project', 'error')
@@ -94,17 +119,25 @@ export function CreateProjectModal({
             <label className="text-sm font-medium text-slate-700">
               Source System
             </label>
+            <input
+              type="text"
+              placeholder="Filter systems..."
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              className="px-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 mb-1"
+            />
             <select
               name="sourceSystemPublicId"
               value={formData.sourceSystemPublicId}
               onChange={handleChange}
               className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
               required
+              size={5}
             >
               <option value="">Select source system...</option>
-              {systems?.map((s) => (
+              {filteredSourceSystems.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name}
+                  {s.name} {s.category ? `(${s.category})` : ''}
                 </option>
               ))}
             </select>
@@ -114,17 +147,25 @@ export function CreateProjectModal({
             <label className="text-sm font-medium text-slate-700">
               Target System
             </label>
+            <input
+              type="text"
+              placeholder="Filter systems..."
+              value={targetFilter}
+              onChange={(e) => setTargetFilter(e.target.value)}
+              className="px-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 mb-1"
+            />
             <select
               name="targetSystemPublicId"
               value={formData.targetSystemPublicId}
               onChange={handleChange}
               className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
               required
+              size={5}
             >
               <option value="">Select target system...</option>
-              {systems?.map((s) => (
+              {filteredTargetSystems.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name}
+                  {s.name} {s.category ? `(${s.category})` : ''}
                 </option>
               ))}
             </select>

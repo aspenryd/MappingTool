@@ -60,17 +60,15 @@ namespace IntegrationMapper.Infrastructure.Services
                         if (item.ValueKind != JsonValueKind.Object && item.ValueKind != JsonValueKind.Array)
                         {
                              AddValue(result, currentPath, item.ToString());
+                             // Also add with [*] suffix to match schema parser's array notation
+                             AddValue(result, currentPath + "[*]", item.ToString());
                         }
                         else
                         {
-                            // If object, recurse with SAME path (schema usually defined as Prop.Child)
-                            // The schema parser handles arrays by *ignoring* the index step in naming children?
-                            // Checked SchemaParser: `ParseElement(firstItem, currentPath + "[*]", ...)`
-                            // But usually, data references are flat: `orders.id`
-                            // So if I have `orders: [{id:1}]`, I want `orders.id` -> 1.
-                            // My `currentPath` is `orders`.
-                            // Recurse with `orders`.
+                            // If object, recurse - use BOTH the direct path and [*] path
+                            // Schema parser uses [*] for array item children
                             TraverseJson(item, currentPath, result);
+                            TraverseJson(item, currentPath + "[*]", result);
                         }
                     }
                     break;
