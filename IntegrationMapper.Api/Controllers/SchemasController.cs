@@ -217,6 +217,7 @@ namespace IntegrationMapper.Api.Controllers
         }
 
         [HttpDelete("examples/{exampleId:guid}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteExample(Guid exampleId)
         {
             var example = await _context.DataObjectExamples.FirstOrDefaultAsync(e => e.PublicId == exampleId);
@@ -228,5 +229,38 @@ namespace IntegrationMapper.Api.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Delete a data object with its schema and all examples (Admin only)
+        /// </summary>
+        [HttpDelete("data-objects/{id:guid}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDataObject(Guid id)
+        {
+            var dataObject = await _context.DataObjects
+                .Include(d => d.Examples)
+                .Include(d => d.Fields)
+                .FirstOrDefaultAsync(d => d.PublicId == id);
+
+            if (dataObject == null) return NotFound();
+
+            // Delete schema file
+            if (!string.IsNullOrEmpty(dataObject.FileReference))
+            {
+                await _fileStorage.DeleteFileAsync(dataObject.FileReference);
+            }
+
+            // Delete example files
+            foreach (var example in dataObject.Examples)
+            {
+                await _fileStorage.DeleteFileAsync(example.FileStoragePath);
+            }
+
+            _context.DataObjects.Remove(dataObject);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
+

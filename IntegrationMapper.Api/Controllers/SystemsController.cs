@@ -70,5 +70,24 @@ namespace IntegrationMapper.Api.Controllers
                 Description = system.Description
             });
         }
+
+        /// <summary>
+        /// Delete a system and all its data objects (Admin only)
+        /// </summary>
+        [HttpDelete("{id:guid}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteSystem(Guid id)
+        {
+            var system = await _context.IntegrationSystems
+                .Include(s => s.DataObjects)
+                .FirstOrDefaultAsync(s => s.PublicId == id);
+            
+            if (system == null) return NotFound();
+
+            _context.IntegrationSystems.Remove(system);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

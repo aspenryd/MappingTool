@@ -156,6 +156,48 @@ namespace IntegrationMapper.Api.Controllers
             });
         }
 
+        /// <summary>
+        /// Delete a mapping project and all its profiles (Admin only)
+        /// </summary>
+        [HttpDelete("{id:guid}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProject(Guid id)
+        {
+            var project = await _context.MappingProjects
+                .Include(p => p.Profiles)
+                    .ThenInclude(pr => pr.Mappings)
+                .FirstOrDefaultAsync(p => p.PublicId == id);
+
+            if (project == null) return NotFound();
+
+            _context.MappingProjects.Remove(project);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Delete a mapping profile and all its mappings (Admin only)
+        /// </summary>
+        [HttpDelete("{projectId:guid}/profiles/{profileId:guid}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProfile(Guid projectId, Guid profileId)
+        {
+            var project = await _context.MappingProjects.FirstOrDefaultAsync(p => p.PublicId == projectId);
+            if (project == null) return NotFound("Project not found");
+
+            var profile = await _context.MappingProfiles
+                .Include(p => p.Mappings)
+                .FirstOrDefaultAsync(p => p.PublicId == profileId && p.MappingProjectId == project.Id);
+
+            if (profile == null) return NotFound("Profile not found");
+
+            _context.MappingProfiles.Remove(profile);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // Consolidating GetMappingContext logic to only use PublicId
         [HttpGet("/api/profiles/{publicId:guid}/map")]
         public async Task<ActionResult<MappingContextDto>> GetMappingContext(Guid publicId)
