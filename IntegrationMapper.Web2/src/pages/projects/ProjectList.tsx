@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useProjects, useSystems } from '../../api/hooks'
 import { useAuth } from '../../auth/AuthProvider'
 import { PageHeader } from '../../components/layout'
-import { Button, Input } from '../../components/ui'
+import { Button, Input, toast } from '../../components/ui'
 import { CreateProjectModal } from './CreateProjectModal'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -54,12 +54,13 @@ export function ProjectList() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       if (response.ok) {
-        queryClient.invalidateQueries({ queryKey: ['projects'] })
+        await queryClient.invalidateQueries({ queryKey: ['projects'] })
+        toast('Project deleted successfully', 'success')
       } else {
-        alert('Failed to delete project')
+        toast('Failed to delete project', 'error')
       }
     } catch {
-      alert('Failed to delete project')
+      toast('Failed to delete project', 'error')
     } finally {
       setDeletingId(null)
     }

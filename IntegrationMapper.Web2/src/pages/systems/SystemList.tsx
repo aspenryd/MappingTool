@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSystems } from '../../api/hooks'
 import { useAuth } from '../../auth/AuthProvider'
 import { PageHeader } from '../../components/layout'
-import { Button, Input } from '../../components/ui'
+import { Button, Input, toast } from '../../components/ui'
 import { AddSystemModal } from './AddSystemModal'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -38,12 +38,13 @@ export function SystemList() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       if (response.ok) {
-        queryClient.invalidateQueries({ queryKey: ['systems'] })
+        await queryClient.invalidateQueries({ queryKey: ['systems'] })
+        toast('System deleted successfully', 'success')
       } else {
-        alert('Failed to delete system')
+        toast('Failed to delete system', 'error')
       }
     } catch {
-      alert('Failed to delete system')
+      toast('Failed to delete system', 'error')
     } finally {
       setDeletingId(null)
     }

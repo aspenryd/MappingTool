@@ -66,7 +66,7 @@ export function SystemDetail() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       if (response.ok) {
-        queryClient.invalidateQueries({ queryKey: ['dataObjects', id] })
+        await queryClient.invalidateQueries({ queryKey: ['dataObjects', id] })
         toast('Data object deleted', 'success')
       } else {
         toast('Failed to delete data object', 'error')
@@ -90,7 +90,7 @@ export function SystemDetail() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       if (response.ok) {
-        queryClient.invalidateQueries({ queryKey: ['dataObjects', id] })
+        await queryClient.invalidateQueries({ queryKey: ['dataObjects', id] })
         toast('Example deleted', 'success')
       } else {
         toast('Failed to delete example', 'error')

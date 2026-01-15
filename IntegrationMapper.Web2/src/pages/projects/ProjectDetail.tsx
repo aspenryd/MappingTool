@@ -42,7 +42,7 @@ export function ProjectDetail() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       if (response.ok) {
-        queryClient.invalidateQueries({ queryKey: ['project', id] })
+        await queryClient.invalidateQueries({ queryKey: ['project', id] })
         toast('Profile deleted', 'success')
       } else {
         toast('Failed to delete profile', 'error')
