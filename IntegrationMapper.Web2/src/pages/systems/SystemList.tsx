@@ -1,15 +1,20 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSystems } from '../../api/hooks'
+import { useAuth } from '../../auth/AuthProvider'
 import { PageHeader } from '../../components/layout'
 import { Button, Input } from '../../components/ui'
 import { AddSystemModal } from './AddSystemModal'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function SystemList() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { data: systems, isLoading, error } = useSystems()
+  const { isAdmin, token } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const filteredSystems =
     systems?.filter((s) => {
@@ -20,6 +25,29 @@ export function SystemList() {
         s.description?.toLowerCase().includes(term)
       )
     }) ?? []
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete "${name}"? This will also delete all data objects and schemas.`)) {
+      return
+    }
+
+    setDeletingId(id)
+    try {
+      const response = await fetch(`/api/systems/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['systems'] })
+      } else {
+        alert('Failed to delete system')
+      }
+    } catch {
+      alert('Failed to delete system')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -88,12 +116,23 @@ export function SystemList() {
                     </p>
                   )}
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate(`/systems/${system.id}`)}
-                >
-                  View Details
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate(`/systems/${system.id}`)}
+                  >
+                    View Details
+                  </Button>
+                  {isAdmin && (
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDelete(system.id, system.name || 'system')}
+                      disabled={deletingId === system.id}
+                    >
+                      {deletingId === system.id ? 'Deleting...' : 'Delete'}
+                    </Button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

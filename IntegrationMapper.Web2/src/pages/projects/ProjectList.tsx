@@ -1,16 +1,21 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProjects, useSystems } from '../../api/hooks'
+import { useAuth } from '../../auth/AuthProvider'
 import { PageHeader } from '../../components/layout'
 import { Button, Input } from '../../components/ui'
 import { CreateProjectModal } from './CreateProjectModal'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function ProjectList() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { data: projects, isLoading: projectsLoading } = useProjects()
   const { data: systems } = useSystems()
+  const { isAdmin, token } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const systemsMap = useMemo(() => {
     const map: Record<string, string> = {}
@@ -36,6 +41,29 @@ export function ProjectList() {
       )
     })
   }, [projects, searchTerm, systemsMap])
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete "${name}"? This will also delete all profiles and mappings.`)) {
+      return
+    }
+
+    setDeletingId(id)
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['projects'] })
+      } else {
+        alert('Failed to delete project')
+      }
+    } catch {
+      alert('Failed to delete project')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   if (projectsLoading) {
     return (
@@ -114,12 +142,23 @@ export function ProjectList() {
                     </p>
                   )}
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate(`/projects/${project.id}`)}
-                >
-                  Open Editor
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate(`/projects/${project.id}`)}
+                  >
+                    Open Editor
+                  </Button>
+                  {isAdmin && (
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDelete(project.id, project.name || 'project')}
+                      disabled={deletingId === project.id}
+                    >
+                      {deletingId === project.id ? 'Deleting...' : 'Delete'}
+                    </Button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

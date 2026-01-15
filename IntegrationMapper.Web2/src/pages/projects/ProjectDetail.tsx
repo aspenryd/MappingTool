@@ -1,17 +1,22 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useProject, useSystems, useDataObjects } from '../../api/hooks'
+import { useAuth } from '../../auth/AuthProvider'
 import { PageHeader } from '../../components/layout'
-import { Button } from '../../components/ui'
+import { Button, toast } from '../../components/ui'
 import { CreateProfileModal } from './CreateProfileModal'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function ProjectDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { data: project, isLoading } = useProject(id!)
   const { data: systems } = useSystems()
+  const { isAdmin, token } = useAuth()
 
   const [isCreateProfileOpen, setIsCreateProfileOpen] = useState(false)
+  const [deletingProfileId, setDeletingProfileId] = useState<string | null>(null)
 
   const sourceSystem = systems?.find((s) => s.id === project?.sourceSystemId)
   const targetSystem = systems?.find((s) => s.id === project?.targetSystemId)
@@ -22,6 +27,32 @@ export function ProjectDetail() {
   const { data: targetDataObjects } = useDataObjects(
     project?.targetSystemId || ''
   )
+
+  const handleDeleteProfile = async (e: React.MouseEvent, profileId: string, profileName: string) => {
+    e.stopPropagation() // Prevent navigating to mapper
+
+    if (!confirm(`Are you sure you want to delete profile "${profileName}"? This will delete all mappings.`)) {
+      return
+    }
+
+    setDeletingProfileId(profileId)
+    try {
+      const response = await fetch(`/api/projects/${id}/profiles/${profileId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['project', id] })
+        toast('Profile deleted', 'success')
+      } else {
+        toast('Failed to delete profile', 'error')
+      }
+    } catch {
+      toast('Failed to delete profile', 'error')
+    } finally {
+      setDeletingProfileId(null)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -118,9 +149,21 @@ export function ProjectDetail() {
                         </span>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">
-                      Open Mapper
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm">
+                        Open Mapper
+                      </Button>
+                      {isAdmin && (
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={(e) => handleDeleteProfile(e, profile.id, profile.name || 'profile')}
+                          disabled={deletingProfileId === profile.id}
+                        >
+                          {deletingProfileId === profile.id ? 'Deleting...' : 'Delete'}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

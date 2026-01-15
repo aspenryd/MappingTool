@@ -1,17 +1,21 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSystem, useDataObjects } from '../../api/hooks'
+import { useAuth } from '../../auth/AuthProvider'
 import { PageHeader } from '../../components/layout'
 import { Button, toast } from '../../components/ui'
 import { SchemaUploadModal } from './SchemaUploadModal'
 import { SchemaViewerModal } from './SchemaViewerModal'
 import { ExampleUploadModal } from './ExampleUploadModal'
 import { apiClient } from '../../api/client'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function SystemDetail() {
   const { id } = useParams<{ id: string }>()
+  const queryClient = useQueryClient()
   const { data: system, isLoading: systemLoading } = useSystem(id!)
   const { data: dataObjects, isLoading: objectsLoading } = useDataObjects(id!)
+  const { isAdmin, token } = useAuth()
 
   const [isUploadOpen, setIsUploadOpen] = useState(false)
   const [viewerModal, setViewerModal] = useState<{
@@ -22,6 +26,8 @@ export function SystemDetail() {
     dataObjectId: string
     name: string
   } | null>(null)
+  const [deletingDataObjectId, setDeletingDataObjectId] = useState<string | null>(null)
+  const [deletingExampleId, setDeletingExampleId] = useState<string | null>(null)
 
   if (systemLoading || objectsLoading) {
     return (
@@ -45,6 +51,54 @@ export function SystemDetail() {
       toast('Schema downloaded', 'success')
     } catch {
       toast('Failed to download schema', 'error')
+    }
+  }
+
+  const handleDeleteDataObject = async (dataObjectId: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete "${name}"? This will delete the schema and all examples.`)) {
+      return
+    }
+
+    setDeletingDataObjectId(dataObjectId)
+    try {
+      const response = await fetch(`/api/schemas/data-objects/${dataObjectId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['dataObjects', id] })
+        toast('Data object deleted', 'success')
+      } else {
+        toast('Failed to delete data object', 'error')
+      }
+    } catch {
+      toast('Failed to delete data object', 'error')
+    } finally {
+      setDeletingDataObjectId(null)
+    }
+  }
+
+  const handleDeleteExample = async (exampleId: string) => {
+    if (!confirm('Are you sure you want to delete this example?')) {
+      return
+    }
+
+    setDeletingExampleId(exampleId)
+    try {
+      const response = await fetch(`/api/schemas/examples/${exampleId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['dataObjects', id] })
+        toast('Example deleted', 'success')
+      } else {
+        toast('Failed to delete example', 'error')
+      }
+    } catch {
+      toast('Failed to delete example', 'error')
+    } finally {
+      setDeletingExampleId(null)
     }
   }
 
@@ -126,6 +180,16 @@ export function SystemDetail() {
                       >
                         Download
                       </Button>
+                      {isAdmin && (
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDeleteDataObject(obj.id, obj.name || 'data object')}
+                          disabled={deletingDataObjectId === obj.id}
+                        >
+                          {deletingDataObjectId === obj.id ? 'Deleting...' : 'Delete'}
+                        </Button>
+                      )}
                     </div>
                   </div>
 
@@ -152,9 +216,19 @@ export function SystemDetail() {
                         {obj.examples.map((ex) => (
                           <span
                             key={ex.id}
-                            className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700"
+                            className="group px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 flex items-center gap-2"
                           >
                             {ex.fileName}
+                            {isAdmin && (
+                              <button
+                                onClick={() => handleDeleteExample(ex.id)}
+                                disabled={deletingExampleId === ex.id}
+                                className="text-red-400 hover:text-red-600 ml-1"
+                                title="Delete example"
+                              >
+                                ×
+                              </button>
+                            )}
                           </span>
                         ))}
                       </div>
