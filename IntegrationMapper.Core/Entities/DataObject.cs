@@ -1,5 +1,8 @@
 namespace IntegrationMapper.Core.Entities
 {
+    /// <summary>
+    /// Represents a data object definition within an integration system, specifying its schema type and source reference.
+    /// </summary>
     public class DataObject
     {
         public int Id { get; set; }

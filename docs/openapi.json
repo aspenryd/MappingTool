@@ -476,8 +476,7 @@
                                                                                                                                                                                         "type":  "string"
                                                                                                                                                                                     },
                                                                                                                                                                            "File":  {
-                                                                                                                                                                                        "type":  "string",
-                                                                                                                                                                                        "format":  "binary"
+                                                                                                                                                                                        "$ref":  "#/components/schemas/IFormFile"
                                                                                                                                                                                     }
                                                                                                                                                                        }
                                                                                                                                                     }
@@ -1026,6 +1025,10 @@
                                                                                                           }
                                                                                         }
                                                                      },
+                                       "IFormFile":  {
+                                                         "type":  "string",
+                                                         "format":  "binary"
+                                                     },
                                        "IntegrationSystemDto":  {
                                                                     "type":  "object",
                                                                     "properties":  {

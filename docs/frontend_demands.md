@@ -28,7 +28,7 @@ The primary goal of the frontend is to provide a user-friendly interface for des
 *   **Transformation Logic**: Users must be able to define transformation logic or add comments for each specific mapping connection (e.g., "Concat First + Last Name").
 
 ### 1.4 Code Generation & Export
-*   **Real-time Preview**: Users should be able to view the generated C# mapping code in real-time within the browser. Code is generated in the backend and provided to the frontend via "[mappingId]/code/csharp" endpoint.
+*   **Real-time Preview**: Users should be able to view the generated C# mapping code in real-time within the browser. Code is generated in the backend and provided to the frontend. The frontend should use the api method `/api/mappings/{mappingId}/code/csharp` to fetch the code.
 *   **Download**: The application must support downloading the mapping definition as:
     *   Executable C# code (`.cs`).
     *   Documentation/Specification Excel sheets (`.xlsx`).
