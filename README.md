@@ -83,13 +83,17 @@ The application will be accessible at `http://localhost:3000`.
 
 ## Features
 
-*   **System Management**: specific systems and their data objects (JSON/XSD schema support).
+*   **System Management**: Define systems and their data objects (JSON/XSD schema support).
 *   **Multi-Object Mapping**: Create projects that map multiple source objects to target objects.
 *   **Visual Mapping Canvas**: Drag-and-drop interface to link fields.
 *   **AI Suggestions**: Auto-map fields based on name and context.
 *   **Exports**: 
     *   Excel Specification (.xlsx)
     *   C# Mapper Code (.cs) - View and Copy directly in the UI.
+*   **Admin Features** (Admin role only):
+    *   Batch upload systems, data objects, and projects via JSON
+    *   User management (create, update roles, delete)
+    *   Delete systems, data objects, projects, profiles, and mappings
 
 ## Folder Structure
 
@@ -98,9 +102,27 @@ The application will be accessible at `http://localhost:3000`.
 ├── IntegrationMapper.Core          # Domain layer (Entities, Interfaces)
 ├── IntegrationMapper.Infrastructure # Implementation layer (Data, Services)
 ├── IntegrationMapper.Tests         # Unit and Integration tests
-├── IntegrationMapper.Web           # Frontend React application
+├── IntegrationMapper.Web2          # Frontend React application (Vite + TypeScript)
 └── docs                            # Design and API documentation
 ```
+
+## Quick Start
+
+Use the included batch script to start all applications:
+
+```bash
+.\runapps.bat
+```
+
+This will start:
+- **API**: http://localhost:5000
+- **Web2**: http://localhost:4000
+
+### Development Login
+
+In development mode, the login screen shows a **User/Admin toggle**:
+- **User** (default): Standard user access
+- **Admin**: Access to admin features (batch uploads, user management, delete operations)
 
 ## Documentation
 

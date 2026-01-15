@@ -58,5 +58,80 @@ namespace IntegrationMapper.Tests.Controllers
             // Verify DB
             Assert.Single(context.IntegrationSystems);
         }
+
+        [Fact]
+        public async Task DeleteSystem_ShouldRemoveSystem()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var system = new IntegrationSystem 
+            { 
+                Name = "ToDelete", 
+                Category = "ERP",
+                Description = "Test",
+                ExternalId = "EXT_DEL"
+            };
+            context.IntegrationSystems.Add(system);
+            await context.SaveChangesAsync();
+
+            var controller = new SystemsController(context);
+
+            // Act
+            var result = await controller.DeleteSystem(system.PublicId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            Assert.Empty(context.IntegrationSystems);
+        }
+
+        [Fact]
+        public async Task DeleteSystem_ShouldReturnNotFound_WhenSystemDoesNotExist()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var controller = new SystemsController(context);
+
+            // Act
+            var result = await controller.DeleteSystem(Guid.NewGuid());
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteSystem_ShouldCascadeDeleteDataObjects()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var system = new IntegrationSystem 
+            { 
+                Name = "WithDataObjects", 
+                Category = "ERP",
+                Description = "Test System",
+                ExternalId = "EXT_CASCADE"
+            };
+            context.IntegrationSystems.Add(system);
+            await context.SaveChangesAsync();
+
+            var dataObject = new DataObject 
+            { 
+                IntegrationSystemId = system.Id, 
+                Name = "TestObject", 
+                SchemaType = "JSON",
+                FileReference = "test.json"
+            };
+            context.DataObjects.Add(dataObject);
+            await context.SaveChangesAsync();
+
+            var controller = new SystemsController(context);
+
+            // Act
+            var result = await controller.DeleteSystem(system.PublicId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            Assert.Empty(context.IntegrationSystems);
+            Assert.Empty(context.DataObjects);
+        }
     }
 }

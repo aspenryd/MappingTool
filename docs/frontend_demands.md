@@ -42,6 +42,12 @@ The primary goal of the frontend is to provide a user-friendly interface for des
     *   **Batch Data Objects Upload**: Upload data objects with schemas and examples via `/api/admin/dataobjects/batch`.
     *   **Batch Projects Upload**: Upload mapping projects, profiles, and field mappings via `/api/admin/projects/batch`.
 *   **User Management**: Admins can create, view, update roles, and delete users via the `/api/users` endpoints.
+*   **Delete Operations** (Admin only):
+    *   Delete systems (cascades to data objects and schemas)
+    *   Delete data objects (cascades to schema files and examples)
+    *   Delete example files
+    *   Delete mapping projects (cascades to profiles and mappings)
+    *   Delete mapping profiles (cascades to field mappings)
 
 ## 2. Security Demands
 
@@ -49,6 +55,7 @@ The primary goal of the frontend is to provide a user-friendly interface for des
 *   **Identity Provider**: Integration with the backend's authentication system (currently implemented via `DevAuth` and future-proofed for OAuth/OIDC).
 *   **Token Management**: The frontend must securely handle access tokens (Bearer tokens) for all API requests. Tokens should not be stored in `localStorage` if possible (in-memory or secure cookie preferred).
 *   **Route Protection**: Unauthenticated users must be redirected to the login page. App routes (`/projects`, `/editor`) must be guarded.
+*   **Role-Based Admin Access**: Admin-only features (delete operations, batch uploads, user management) are protected both in the UI (conditional rendering) and API (role-based authorization).
 
 ### 2.2 Data Security
 *   **Input Validation**: All user inputs (project names, logic scripts) must be validated on the client side before submission to prevent injection attacks or invalid state.

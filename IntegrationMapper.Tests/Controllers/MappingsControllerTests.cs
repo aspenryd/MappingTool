@@ -88,5 +88,126 @@ namespace IntegrationMapper.Tests.Controllers
             Assert.Equal(10, suggestions[0].SourceFieldId);
             Assert.Equal(20, suggestions[0].TargetFieldId);
         }
+
+        [Fact]
+        public async Task DeleteProject_ShouldRemoveProject()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var mockExtractor = new Mock<IExampleExtractionService>();
+            var mockStorage = new Mock<IFileStorageService>();
+
+            var project = new MappingProject { Name = "ToDelete", Description = "Test" };
+            context.MappingProjects.Add(project);
+            await context.SaveChangesAsync();
+
+            var controller = new MappingsController(context, mockExtractor.Object, mockStorage.Object);
+
+            // Act
+            var result = await controller.DeleteProject(project.PublicId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            Assert.Empty(context.MappingProjects);
+        }
+
+        [Fact]
+        public async Task DeleteProject_ShouldReturnNotFound_WhenProjectDoesNotExist()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var mockExtractor = new Mock<IExampleExtractionService>();
+            var mockStorage = new Mock<IFileStorageService>();
+            var controller = new MappingsController(context, mockExtractor.Object, mockStorage.Object);
+
+            // Act
+            var result = await controller.DeleteProject(Guid.NewGuid());
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteProject_ShouldCascadeDeleteProfiles()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var mockExtractor = new Mock<IExampleExtractionService>();
+            var mockStorage = new Mock<IFileStorageService>();
+
+            var project = new MappingProject { Name = "WithProfiles", Description = "Test" };
+            context.MappingProjects.Add(project);
+            await context.SaveChangesAsync();
+
+            var profile = new MappingProfile 
+            { 
+                Name = "TestProfile", 
+                MappingProjectId = project.Id 
+            };
+            context.MappingProfiles.Add(profile);
+            await context.SaveChangesAsync();
+
+            var controller = new MappingsController(context, mockExtractor.Object, mockStorage.Object);
+
+            // Act
+            var result = await controller.DeleteProject(project.PublicId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            Assert.Empty(context.MappingProjects);
+            Assert.Empty(context.MappingProfiles);
+        }
+
+        [Fact]
+        public async Task DeleteProfile_ShouldRemoveProfile()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var mockExtractor = new Mock<IExampleExtractionService>();
+            var mockStorage = new Mock<IFileStorageService>();
+
+            var project = new MappingProject { Name = "Parent", Description = "Test" };
+            context.MappingProjects.Add(project);
+            await context.SaveChangesAsync();
+
+            var profile = new MappingProfile 
+            { 
+                Name = "ToDelete", 
+                MappingProjectId = project.Id 
+            };
+            context.MappingProfiles.Add(profile);
+            await context.SaveChangesAsync();
+
+            var controller = new MappingsController(context, mockExtractor.Object, mockStorage.Object);
+
+            // Act
+            var result = await controller.DeleteProfile(project.PublicId, profile.PublicId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            Assert.Empty(context.MappingProfiles);
+            Assert.Single(context.MappingProjects); // Project should still exist
+        }
+
+        [Fact]
+        public async Task DeleteProfile_ShouldReturnNotFound_WhenProfileDoesNotExist()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var mockExtractor = new Mock<IExampleExtractionService>();
+            var mockStorage = new Mock<IFileStorageService>();
+
+            var project = new MappingProject { Name = "Parent", Description = "Test" };
+            context.MappingProjects.Add(project);
+            await context.SaveChangesAsync();
+
+            var controller = new MappingsController(context, mockExtractor.Object, mockStorage.Object);
+
+            // Act
+            var result = await controller.DeleteProfile(project.PublicId, Guid.NewGuid());
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
     }
 }
