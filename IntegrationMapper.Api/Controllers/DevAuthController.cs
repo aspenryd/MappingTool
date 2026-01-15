@@ -22,7 +22,7 @@ namespace IntegrationMapper.Api.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login([FromQuery] string role = "User")
         {
             if (!_env.IsDevelopment())
             {
@@ -35,10 +35,14 @@ namespace IntegrationMapper.Api.Controllers
                 return BadRequest("DevAuth:Secret is not configured.");
             }
 
+            // Validate and normalize role
+            var normalizedRole = role.Equals("Admin", StringComparison.OrdinalIgnoreCase) ? "Admin" : "User";
+            var userName = normalizedRole == "Admin" ? "Dev Admin" : "Dev User";
+
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, "DevUser"),
-                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim(ClaimTypes.Name, userName),
+                new Claim(ClaimTypes.Role, normalizedRole),
                 new Claim("tid", "dev-tenant"),
                 new Claim("oid", "dev-user-id")
             };
@@ -57,7 +61,9 @@ namespace IntegrationMapper.Api.Controllers
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                expires = token.ValidTo
+                expires = token.ValidTo,
+                role = normalizedRole,
+                user = userName
             });
         }
     }

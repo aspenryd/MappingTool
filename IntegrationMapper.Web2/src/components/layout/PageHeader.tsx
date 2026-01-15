@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom'
 
 interface PageHeaderProps {
   title: string
+  description?: string
   backTo?: string
   actions?: ReactNode
 }
 
-export function PageHeader({ title, backTo, actions }: PageHeaderProps) {
+export function PageHeader({ title, description, backTo, actions }: PageHeaderProps) {
   const navigate = useNavigate()
 
   return (
@@ -34,9 +35,15 @@ export function PageHeader({ title, backTo, actions }: PageHeaderProps) {
             </svg>
           </button>
         )}
-        <h1 className="text-lg font-semibold text-slate-900">{title}</h1>
+        <div>
+          <h1 className="text-lg font-semibold text-slate-900">{title}</h1>
+          {description && (
+            <p className="text-sm text-slate-500 mt-0.5">{description}</p>
+          )}
+        </div>
       </div>
       {actions && <div className="flex items-center gap-3">{actions}</div>}
     </div>
   )
 }
+

@@ -33,6 +33,16 @@ The primary goal of the frontend is to provide a user-friendly interface for des
     *   Executable C# code (`.cs`).
     *   Documentation/Specification Excel sheets (`.xlsx`).
 
+### 1.5 Admin Features
+*   **Admin Role**: Users with the "Admin" role have access to additional administrative features via a dedicated Admin menu.
+*   **Role-Based Access**: Admin menu and routes are only visible/accessible to users with Admin role.
+*   **Dev Mode Login**: In development mode, the login screen provides a toggle to select User or Admin role (default: User).
+*   **Batch Operations**:
+    *   **Batch Systems Upload**: Upload a JSON array of systems to create or update multiple systems at once via `/api/admin/systems/batch`.
+    *   **Batch Data Objects Upload**: Upload data objects with schemas and examples via `/api/admin/dataobjects/batch`.
+    *   **Batch Projects Upload**: Upload mapping projects, profiles, and field mappings via `/api/admin/projects/batch`.
+*   **User Management**: Admins can create, view, update roles, and delete users via the `/api/users` endpoints.
+
 ## 2. Security Demands
 
 ### 2.1 Authentication & Authorization

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './auth/AuthProvider'
 import { apiClient } from './api/client'
@@ -7,9 +7,11 @@ import { ToastContainer, Button } from './components/ui'
 import { SystemList, SystemDetail } from './pages/systems'
 import { ProjectList, ProjectDetail } from './pages/projects'
 import { MappingCanvas } from './pages/mapping'
+import { AdminDashboard, BatchSystemsUpload, BatchDataObjectsUpload, BatchProjectsUpload, UserManagement } from './pages/admin'
 
 function App() {
-  const { isAuthenticated, isLoading, login, token } = useAuth()
+  const { isAuthenticated, isLoading, login, token, isAdmin } = useAuth()
+  const [loginAsAdmin, setLoginAsAdmin] = useState(false)
 
   useEffect(() => {
     apiClient.setTokenGetter(() => token)
@@ -39,8 +41,31 @@ function App() {
             Design and manage integration mappings between your systems with a
             visual editor.
           </p>
-          <Button onClick={login} size="lg">
-            Login to Continue
+
+          {/* Role Toggle - only in dev mode */}
+          {import.meta.env.DEV && (
+            <div className="flex items-center justify-center gap-3 bg-white rounded-lg px-4 py-3 shadow-sm border border-slate-200">
+              <span className={`text-sm font-medium ${!loginAsAdmin ? 'text-blue-600' : 'text-slate-400'}`}>
+                User
+              </span>
+              <button
+                onClick={() => setLoginAsAdmin(!loginAsAdmin)}
+                className={`relative w-12 h-6 rounded-full transition-colors ${loginAsAdmin ? 'bg-purple-600' : 'bg-slate-300'
+                  }`}
+              >
+                <span
+                  className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${loginAsAdmin ? 'translate-x-7' : 'translate-x-1'
+                    }`}
+                />
+              </button>
+              <span className={`text-sm font-medium ${loginAsAdmin ? 'text-purple-600' : 'text-slate-400'}`}>
+                Admin
+              </span>
+            </div>
+          )}
+
+          <Button onClick={() => login(loginAsAdmin)} size="lg">
+            Login {loginAsAdmin ? 'as Admin' : 'to Continue'}
           </Button>
         </div>
       </div>
@@ -58,6 +83,22 @@ function App() {
           <Route path="/projects" element={<ProjectList />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/mapping/:id" element={<MappingCanvas />} />
+
+          {/* Admin routes - only accessible when isAdmin */}
+          {isAdmin && (
+            <>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/systems" element={<BatchSystemsUpload />} />
+              <Route path="/admin/dataobjects" element={<BatchDataObjectsUpload />} />
+              <Route path="/admin/projects" element={<BatchProjectsUpload />} />
+              <Route path="/admin/users" element={<UserManagement />} />
+            </>
+          )}
+
+          {/* Redirect non-admins trying to access admin routes */}
+          {!isAdmin && (
+            <Route path="/admin/*" element={<Navigate to="/projects" replace />} />
+          )}
         </Routes>
       </main>
       <ToastContainer />

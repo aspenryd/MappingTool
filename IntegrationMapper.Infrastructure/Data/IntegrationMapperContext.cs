@@ -17,6 +17,7 @@ namespace IntegrationMapper.Infrastructure.Data
         public DbSet<FieldMapping> FieldMappings { get; set; }
         public DbSet<FieldMappingSource> FieldMappingSources { get; set; }
         public DbSet<DataObjectExample> DataObjectExamples { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

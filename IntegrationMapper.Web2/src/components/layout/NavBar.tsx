@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
 
 export function NavBar() {
-  const { user, logout } = useAuth()
+  const { user, logout, isAdmin, role } = useAuth()
 
   return (
     <header className="h-14 bg-slate-900 text-white flex items-center px-6 shadow-lg">
@@ -20,10 +20,9 @@ export function NavBar() {
           <NavLink
             to="/systems"
             className={({ isActive }) =>
-              `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-slate-800 text-white'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
+                ? 'bg-slate-800 text-white'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`
             }
           >
@@ -32,20 +31,41 @@ export function NavBar() {
           <NavLink
             to="/projects"
             className={({ isActive }) =>
-              `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-slate-800 text-white'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
+                ? 'bg-slate-800 text-white'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`
             }
           >
             Projects
           </NavLink>
+
+          {/* Admin menu - only visible to admins */}
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
+                  ? 'bg-purple-700 text-white'
+                  : 'text-purple-400 hover:text-white hover:bg-purple-700/50'
+                }`
+              }
+            >
+              Admin
+            </NavLink>
+          )}
         </nav>
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="text-sm text-slate-400">{user}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-slate-400">{user}</span>
+          {isAdmin && (
+            <span className="px-2 py-0.5 text-xs bg-purple-600 rounded-full font-medium">
+              {role}
+            </span>
+          )}
+        </div>
         <button
           onClick={logout}
           className="px-3 py-1.5 text-sm bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors border border-slate-700"
